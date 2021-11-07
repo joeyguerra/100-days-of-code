@@ -1,30 +1,19 @@
 # 100 Days Of Code - Log
 
-### Day 0: February 30, 2016 (Example 1)
-##### (delete me or comment me out)
+## My Story
 
-**Today's Progress**: Fixed CSS, worked on canvas functionality for the app.
+I started learning web development in 1995. I was working for Loral Space Communications at NASA/JSC. Lured by the promise of the WWW, my journey started by viewing source with the Netscape browser on my PowerPC 7500 Mac, up at all hours of the night (btw, Apple built a browser called CyberDog ;). As I pulled that thread, I learned HTML -> CSS -> Javascript -> Browsers -> Perl -> Berkley DB -> UNIX -> DNS -> TCP -> HTTP -> Networking -> Credit Card processing -> MySQL -> PHP -> ASP -> ASP.Net -> Windows -> IIS -> Apache -> ... and I continue to pull on that thread. It's neverending.
 
-**Thoughts:** I really struggled with CSS, but, overall, I feel like I am slowly getting better at it. Canvas is still new for me, but I managed to figure out some basic functionality.
+Fast forward to today, I see myself in everyone who is trying to learn how to code, make a better life for themselves, and just pursuing a dream. It's really inspiring and it reminds me how faw I've come, as well as how hard things can be.
 
-**Link to work:** [Calculator App](http://www.example.com)
+So much has changed in web development since 1995. I thought I'd jump in and join this community to explore the current capabilities of the Browser and the web, as well as to reminisce about how things used to be, revisit the problems we had over the years and see what tools, if any, we don't need because the ecosystem has evolved.
 
-### Day 0: February 30, 2016 (Example 2)
-##### (delete me or comment me out)
+To be honest, I really don't know if I'll be able to stay consistent. But I'll try my best.
 
-**Today's Progress**: Fixed CSS, worked on canvas functionality for the app.
+## Day 0: November 7, 2021
 
-**Thoughts**: I really struggled with CSS, but, overall, I feel like I am slowly getting better at it. Canvas is still new for me, but I managed to figure out some basic functionality.
+**Today's Progress**: Created index.html page, forked repo, merged existing files, created an html form, decided to use double quotes in js.
 
-**Link(s) to work**: [Calculator App](http://www.example.com)
+**Thoughts:** I'm reminded how hard it is to learn how to code because the setup can be complicated. I tried just double clicking on an HTML file and loading a javascript module, but was immediately blocked by the browser trying to keep me safe by applying the CORS. I'll just code in the HTML first. I'll let the future Joey G deal with CORS and code organization. Funny how often we do this to our future self. It helps to get gewd at balancing this.
 
-
-### Day 1: June 27, Monday
-
-**Today's Progress**: I've gone through many exercises on FreeCodeCamp.
-
-**Thoughts** I've recently started coding, and it's a great feeling when I finally solve an algorithm challenge after a lot of attempts and hours spent.
-
-**Link(s) to work**
-1. [Find the Longest Word in a String](https://www.freecodecamp.com/challenges/find-the-longest-word-in-a-string)
-2. [Title Case a Sentence](https://www.freecodecamp.com/challenges/title-case-a-sentence)
+**Link to work:** [The Git Repo](https://github.com/joeyguerra/100-days-of-code)
