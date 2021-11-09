@@ -17,3 +17,13 @@ To be honest, I really don't know if I'll be able to stay consistent. But I'll t
 **Thoughts:** I'm reminded how hard it is to learn how to code because the setup can be complicated. I tried just double clicking on an HTML file and loading a javascript module, but was immediately blocked by the browser trying to keep me safe by applying the CORS. I'll just code in the HTML first. I'll let the future Joey G deal with CORS and code organization. Funny how often we do this to our future self. It helps to get gewd at balancing this.
 
 **Link to work:** [The Git Repo](https://github.com/joeyguerra/100-days-of-code)
+
+## Day 1: November 8, 2021
+
+**Today's Progress**: 
+
+**Thoughts:** Decided to create a todo list, but not a todo list. We'll see how it ends up. I implemented the MVC pattern. Controller, View and Model. Created KeyValueObservable for the object communication strategy. When I first started learning Javascript, I did NOT start here. I was more concerned with the Javascript language itself and the Document Object Model (DOM) differences between Browsers. Ugh. Creating my own facade to provide a common API for DOM manipulation across the different browsers took up most of my time. QueySelect didn't exist back then, but I could use IDs and getElementById instead to be honest which is what I often did.
+
+Today I tried using a Proxy for the observable code, but I couldn't find a way to add the observe method to it. So I leveraged Reflect to define properties on the class which traps the getting and setting calls on the object, allowing for observer notifications. 
+
+**Link to work:** [The Git Repo](https://github.com/joeyguerra/100-days-of-code)

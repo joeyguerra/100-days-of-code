@@ -8,18 +8,83 @@
             <h1>100 Days of Code</h1>
         </header>
         <main>
-            <form>
+            <form id="formView">
                 <label for="name">Just something to save</label>
-                <textarea name="something" placeholder="Put something in here to save to the list"></textarea>
+                <textarea name="item" placeholder="Put something in here to save to the list"></textarea>
                 <button type="submit">Submit</button>
             </form>
+            <ul></ul>
         </main>
         <footer>
 
         </footer>
     </body>
     <script>
-        let something = document.querySelector("[name='something']");
+        class SomethingFormView {
+            constructor(container, model, delegate){
+                this.container = container;
+                this.model = model;
+                this.delegate = delegate;
+                this.textarea = this.delegate.document.querySelector("[name='item']");
+                this.container.addEventListener("submit", this.onSubmit.bind(this), true);
+                this.textarea.addEventListener("keyup", this.onKeyUp.bind(this), true);
+            }
+            onSubmit(e){
+                e.preventDefault();
+            }
+            onKeyUp(e){
+                this.model.value = e.target.value;
+                console.log(this.model.value);
+            }
+        }
+        class SomethingFormController {
+            constructor(view, model, delegate){
+                this.view = view;
+                this.model = model;
+                this.delegate = delegate;
+                this.model.observe("value", this);
+            }
+            update(key, oldValue, value){
+                console.log("Updating ", value);
+            }
+        }
+        class KeyValueObservable {
+            constructor(observable){
+                this.observers = {};
+                const changed = this.changed.bind(this);
+                const cached = Object.assign({}, observable);
+                Object.keys(observable).forEach(key => {
+                    Reflect.defineProperty(this, key, {
+                        get(){
+                            return cached[key];
+                        },
+                        set(value){
+                            const old = cached[key];
+                            cached[key] = value;
+                            changed(key, old, value);
+                        }
+                    })
+                })
+            }
+            changed(key, old, value){
+                if(!this.observers[key]) return;
+                this.observers[key]?.forEach(o=>o.update(key, old, value));
+            }
+            observe(key, observer){
+                if(!this.observers[key]) this.observers[key] = [];
+                this.observers[key].push(observer);
+            }
+        }
+
+        const app = {
+            document: window.document
+        };
+
+        let something = new KeyValueObservable({
+            value: null
+        });
         
+
+        new SomethingFormController(new SomethingFormView(document.getElementById("formView"), something, app), something, app);
     </script>
 </html>
