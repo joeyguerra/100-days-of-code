@@ -2,6 +2,15 @@
 <html>
     <head>
         <title>100 Days of Code</title>
+        <style>
+            label {
+                display: block;
+            }
+
+            input {
+                display: block;
+            }
+        </style>
     </head>
     <body>
         <header>
@@ -10,47 +19,19 @@
         <main>
             <form id="formView">
                 <label for="name">Just something to save</label>
-                <textarea name="item" placeholder="Put something in here to save to the list"></textarea>
+                <input type="text" name="item" placeholder="Put something in here to save to the list" />
                 <button type="submit">Submit</button>
             </form>
-            <ul></ul>
+            <ul id="stuffToDosView"></ul>
         </main>
         <footer>
 
         </footer>
     </body>
     <script>
-        class SomethingFormView {
-            constructor(container, model, delegate){
-                this.container = container;
-                this.model = model;
-                this.delegate = delegate;
-                this.textarea = this.delegate.document.querySelector("[name='item']");
-                this.container.addEventListener("submit", this.onSubmit.bind(this), true);
-                this.textarea.addEventListener("keyup", this.onKeyUp.bind(this), true);
-            }
-            onSubmit(e){
-                e.preventDefault();
-            }
-            onKeyUp(e){
-                this.model.value = e.target.value;
-                console.log(this.model.value);
-            }
-        }
-        class SomethingFormController {
-            constructor(view, model, delegate){
-                this.view = view;
-                this.model = model;
-                this.delegate = delegate;
-                this.model.observe("value", this);
-            }
-            update(key, oldValue, value){
-                console.log("Updating ", value);
-            }
-        }
         class KeyValueObservable {
             constructor(observable){
-                this.observers = {};
+                this.dependents = {};
                 const changed = this.changed.bind(this);
                 const cached = Object.assign({}, observable);
                 Object.keys(observable).forEach(key => {
@@ -67,24 +48,75 @@
                 })
             }
             changed(key, old, value){
-                if(!this.observers[key]) return;
-                this.observers[key]?.forEach(o=>o.update(key, old, value));
+                if(!this.dependents[key]) return;
+                this.dependents[key]?.forEach(o=>o.update(key, old, value));
             }
-            observe(key, observer){
-                if(!this.observers[key]) this.observers[key] = [];
-                this.observers[key].push(observer);
+            observe(key, dependent){
+                if(!this.dependents[key]) this.dependents[key] = [];
+                this.dependents[key].push(dependent);
+            }
+            commit(){
+
             }
         }
 
+        class TextView {
+            constructor(container, model, controller = null){
+                this.container = container;
+                this.model = model;
+                this.controller = controller;
+            }
+        }
+        class SubmitButtonView {
+            constructor(container, model, controller = null){
+                this.container = container;
+                this.model = model;
+                this.controller = controller;
+            }
+        }
+
+        class FormController {
+            constructor(container, model, delegate){
+                this.model = model;
+                this.container = container;
+                this.delegate = delegate;
+                this.container.addEventListener("submit", this.onSubmit.bind(this), true);
+                this.views = [];
+            }
+            addView(view){
+                this.views.push(view);
+                if(view instanceof TextView) {
+                    view.container.addEventListener("keyup", this.onTextViewKeyUp.bind(this), true);
+                }
+                if(view instanceof SubmitButtonView) view.container.addEventListener("click", this.onSubmitButtonClick.bind(this), true);
+            }
+            onSubmit(e){
+                e.preventDefault();
+            }
+            onSubmitButtonClick(e){
+                this.model.commit();
+                const button = this.views.find(v => v instanceof SubmitButtonView);
+                button.container.innerText = "Saved";
+                setTimeout(()=>{
+                    button.container.innerText = "Submit";
+                }, 1000);
+            }
+            onTextViewKeyUp(e){
+                this.model.value = e.target.value;
+                console.log(this.model.value);
+            }
+        }
         const app = {
-            document: window.document
+            document: window.document,
+            views: []
         };
 
         let something = new KeyValueObservable({
             value: null
         });
-        
+        let formController = new FormController(document.getElementById("formView"), something, app);
+        formController.addView(new TextView(formController.container.querySelector("[name='item']"), something, formController));
+        formController.addView(new SubmitButtonView(formController.container.querySelector("button"), something, formController));
 
-        new SomethingFormController(new SomethingFormView(document.getElementById("formView"), something, app), something, app);
     </script>
 </html>

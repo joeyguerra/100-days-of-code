@@ -27,3 +27,19 @@ To be honest, I really don't know if I'll be able to stay consistent. But I'll t
 Today I tried using a Proxy for the observable code, but I couldn't find a way to add the observe method to it. So I leveraged Reflect to define properties on the class which traps the getting and setting calls on the object, allowing for observer notifications. 
 
 **Link to work:** [The Git Repo](https://github.com/joeyguerra/100-days-of-code)
+
+## Day 2: November 9, 2021
+
+**Today's Progress**
+
+- Setup Github pages
+- Setup a Github Workflow
+- Read the MVC articles
+- Refactored the MVC codebase to figure out how objects would communicate with each other
+
+**Thoughts:** It's facinating to me how just implementing code as it's described in the MVC paper works really well. I also noticed how the data flow is one direction if you write the code as described in the paper.
+
+**Link to work:**
+
+- [Github Pages](https://joeyguerra.github.io/100-days-of-code/)
+- [MVC XEROX PARC 1978-79](https://folk.universitetetioslo.no/trygver/themes/mvc/mvc-index.html)
