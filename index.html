@@ -96,6 +96,11 @@
                 this.utcTimeInms = utcTimeInms;
             }
         }
+        class DeleteItemCommand {
+            constructor(id){
+                this.id = id;
+            }
+        }
 
         class TextView {
             constructor(container, events, commands){
@@ -119,13 +124,18 @@
                 this.events = events;
                 this.commands = commands;
                 this.commands.observe("push", this);
+                this.events.observe("push", this);
             }
             update(key, old, value){
-                if(!(value instanceof AddItemCommand)) return;
-                this.addNewItem(value.item);
+                if(value instanceof AddItemCommand) {
+                    this.addNewItem(value);
+                }
+                if(value instanceof MouseEvent && value.target.title == "delete"){
+                    this.container.removeChild(value.target.parentNode);
+                }
             }
-            addNewItem(item){
-                this.container.innerHTML += `<li>${item}</li>`;
+            addNewItem(addItemCommand){
+                this.container.innerHTML += `<li>${addItemCommand.item}<button id="${addItemCommand.utcTimeInms}" title="delete">Delete</button></li>`;
             }
 
         }
