@@ -30,8 +30,9 @@
     </body>
     <script>
         class KeyValueObservable {
-            constructor(observable){
+            constructor(observable = {}){
                 this.dependents = {};
+                observable = observable || {};
                 const changed = this.changed.bind(this);
                 const cached = Object.assign({}, observable);
                 Object.keys(observable).forEach(key => {
@@ -60,63 +61,99 @@
             }
         }
 
+        class ObservableList extends Array{
+            constructor(...args) {
+                super(...args);
+                this.observable = new KeyValueObservable(null);
+            }
+            pop(){
+                let last = super.pop();
+                this.observable.changed("pop", last, null);
+                return last;
+            }
+            push(item){
+                super.push(item);
+                this.observable.changed("push", null, item);
+            }
+            shift(){
+                let first = super.shift();
+                this.observable.changed("shift", null, first);
+                return first;
+            }
+            unshift(...items){
+                super.unshift(...items);
+                this.observable.changed("unshift", null, items);
+                return items.length;
+            }
+            observe(key, observer){
+                this.observable.observe(key, observer);
+            }
+        }
+
+        class AddItemCommand {
+            constructor(item, utcTimeInms){
+                this.item = item;
+                this.utcTimeInms = utcTimeInms;
+            }
+        }
+
         class TextView {
-            constructor(container, model, controller = null){
+            constructor(container, events, commands){
                 this.container = container;
-                this.model = model;
-                this.controller = controller;
+                this.events = events;
+                this.commands = commands;
+                this.events.observe("push", this);
             }
-        }
-        class SubmitButtonView {
-            constructor(container, model, controller = null){
-                this.container = container;
-                this.model = model;
-                this.controller = controller;
-            }
-        }
-
-        class FormController {
-            constructor(container, model, delegate){
-                this.model = model;
-                this.container = container;
-                this.delegate = delegate;
-                this.container.addEventListener("submit", this.onSubmit.bind(this), true);
-                this.views = [];
-            }
-            addView(view){
-                this.views.push(view);
-                if(view instanceof TextView) {
-                    view.container.addEventListener("keyup", this.onTextViewKeyUp.bind(this), true);
+            update(key, old, value){
+                if(value.target != this.container) return;
+                if(!(value instanceof(KeyboardEvent))) return;
+                if(value.key == "Enter" && this.container.value.length > 0){
+                    this.commands.push(new AddItemCommand(this.container.value, new Date().getTime()));
+                    this.container.value = "";
                 }
-                if(view instanceof SubmitButtonView) view.container.addEventListener("click", this.onSubmitButtonClick.bind(this), true);
-            }
-            onSubmit(e){
-                e.preventDefault();
-            }
-            onSubmitButtonClick(e){
-                this.model.commit();
-                const button = this.views.find(v => v instanceof SubmitButtonView);
-                button.container.innerText = "Saved";
-                setTimeout(()=>{
-                    button.container.innerText = "Submit";
-                }, 1000);
-            }
-            onTextViewKeyUp(e){
-                this.model.value = e.target.value;
-                console.log(this.model.value);
             }
         }
-        const app = {
-            document: window.document,
-            views: []
-        };
+        class ListView {
+            constructor(container, events, commands){
+                this.container = container;
+                this.events = events;
+                this.commands = commands;
+                this.commands.observe("push", this);
+            }
+            update(key, old, value){
+                if(!(value instanceof AddItemCommand)) return;
+                this.addNewItem(value.item);
+            }
+            addNewItem(item){
+                this.container.innerHTML += `<li>${item}</li>`;
+            }
 
-        let something = new KeyValueObservable({
-            value: null
-        });
-        let formController = new FormController(document.getElementById("formView"), something, app);
-        formController.addView(new TextView(formController.container.querySelector("[name='item']"), something, formController));
-        formController.addView(new SubmitButtonView(formController.container.querySelector("button"), something, formController));
+        }
+        class FormView {
+            constructor(container, events, delegate){
+                this.container = container;
+                this.events = events;
+                this.delegate = delegate;
+                this.events.observe("push", this);
+            }
+            update(key, old, value){
+                if(value.target.parentNode != this.container) return;
+                if(value.type != "click") return;
+                value.preventDefault();
+            }
+        }
 
+        const events = new ObservableList();
+        const commands = new ObservableList();
+        const t = new TextView(document.querySelector("[name='item']"), events, commands);
+        const f = new FormView(document.getElementById("formView"), events);
+        const l = new ListView(document.getElementById("stuffToDosView"), events, commands);
+        ["click", "keyup"].forEach(event => document.addEventListener(event, e => events.push(e), true));
+/*
+        f(events) -> state
+            match f(state, event) -> state
+
+        f(state, command) -> events
+*/
     </script>
 </html>
