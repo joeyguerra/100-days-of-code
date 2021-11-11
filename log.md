@@ -43,3 +43,13 @@ Today I tried using a Proxy for the observable code, but I couldn't find a way t
 
 - [Github Pages](https://joeyguerra.github.io/100-days-of-code/)
 - [MVC XEROX PARC 1978-79](https://folk.universitetetioslo.no/trygver/themes/mvc/mvc-index.html)
+
+## Day 3: November 10, 2021
+
+**Today's Progress** Trying to implement Event Sourcing instead of MVC.
+
+**Thoughts:** My colleagues have implemented an Event Sourced system and I'm trying to understand it. So I figured I would implement Event Sourcing on the client side to see how it would work out. There seems to be less code. But I'm curious how this scales because I'm having to write some weird conditionals and there's so many events been stored in the events array.
+
+**Link to work:**
+
+- [Github Pages](https://joeyguerra.github.io/100-days-of-code/)
