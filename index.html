@@ -101,6 +101,12 @@
                 this.id = id;
             }
         }
+        class UpdateItemCommand {
+            constructor(item, utcTimeInms){
+                this.item = item;
+                this.utcTimeInms = utcTimeInms;
+            }
+        }
 
         class TextView {
             constructor(container, events, commands){
@@ -110,6 +116,7 @@
                 this.events.observe("push", this);
             }
             update(key, old, value){
+                console.log("TextView", value);
                 if(value.target != this.container) return;
                 if(!(value instanceof(KeyboardEvent))) return;
                 if(value.key == "Enter" && this.container.value.length > 0){
@@ -133,11 +140,17 @@
                 if(value instanceof MouseEvent && value.target.title == "delete"){
                     this.container.removeChild(value.target.parentNode);
                 }
+                if(value instanceof MouseEvent && value.type == "dblclick"){
+                    value.target.contentEditable = true;
+                }
+                if(value instanceof FocusEvent && value.type == "blur" && value.target.contentEditable){
+                    value.target.contentEditable = false;
+                    this.commands.push(new UpdateItemCommand(value.target.innerText, parseInt(value.target.id, 10)));
+                }
             }
             addNewItem(addItemCommand){
-                this.container.innerHTML += `<li>${addItemCommand.item}<button id="${addItemCommand.utcTimeInms}" title="delete">Delete</button></li>`;
+                this.container.innerHTML += `<li id="${addItemCommand.utcTimeInms}"><span>${addItemCommand.item}</span><button title="delete">Delete</button></li>`;
             }
-
         }
         class FormView {
             constructor(container, events, delegate){
@@ -158,7 +171,7 @@
         const t = new TextView(document.querySelector("[name='item']"), events, commands);
         const f = new FormView(document.getElementById("formView"), events);
         const l = new ListView(document.getElementById("stuffToDosView"), events, commands);
-        ["click", "keyup"].forEach(event => document.addEventListener(event, e => events.push(e), true));
+        ["blur", "dblclick", "click", "keyup"].forEach(event => document.addEventListener(event, e => events.push(e), true));
 /*
         f(events) -> state
             match f(state, event) -> state
