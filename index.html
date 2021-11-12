@@ -18,11 +18,11 @@
         </header>
         <main>
             <form id="formView">
-                <label for="name">Just something to save</label>
-                <input type="text" name="item" placeholder="Put something in here to save to the list" />
-                <button type="submit">Submit</button>
+                <label for="name" id="formView_label">Just something to save</label>
+                <input type="text" id="formView_item" name="item" placeholder="Put something in here to save to the list" />
+                <button type="submit" id="formView_submit">Submit</button>
             </form>
-            <ul id="stuffToDosView"></ul>
+            <ul id="listView"></ul>
         </main>
         <footer>
 
@@ -61,29 +61,45 @@
             }
         }
 
+        class ObservableLog extends Array{
+            constructor(...args) {
+                super(...args);
+                this.observable = new KeyValueObservable(null);
+            }
+            append(item){
+                super.push(item);
+                this.observable.changed("append", null, item);
+            }
+            observe(key, observer){
+                this.observable.observe(key, observer);
+            }
+        }
         class ObservableList extends Array{
             constructor(...args) {
                 super(...args);
                 this.observable = new KeyValueObservable(null);
             }
-            pop(){
-                let last = super.pop();
-                this.observable.changed("pop", last, null);
-                return last;
-            }
             push(item){
                 super.push(item);
                 this.observable.changed("push", null, item);
             }
-            shift(){
-                let first = super.shift();
-                this.observable.changed("shift", null, first);
-                return first;
+            pop(){
+                const item = super.pop();
+                this.observable.changed("pop", null, item);
+                return item;
             }
-            unshift(...items){
-                super.unshift(...items);
-                this.observable.changed("unshift", null, items);
-                return items.length;
+            remove(d){
+                let i = 0;
+                let ubounds = this.length;
+                let deleted = [];
+                for(i; i<ubounds;i++){
+                    if(d(this[i], i)){
+                        deleted = this.splice(i, 1);
+                        this.delegate.changed("remove", deleted[0], i);
+                        break;
+                    }
+                }
+                return deleted[0];
             }
             observe(key, observer){
                 this.observable.observe(key, observer);
@@ -109,73 +125,113 @@
         }
 
         class TextView {
-            constructor(container, events, commands){
+            constructor(container, model, delegate){
                 this.container = container;
-                this.events = events;
-                this.commands = commands;
-                this.events.observe("push", this);
+                this.model = model;
+                this.delegate = delegate;
             }
-            update(key, old, value){
-                console.log("TextView", value);
-                if(value.target != this.container) return;
-                if(!(value instanceof(KeyboardEvent))) return;
-                if(value.key == "Enter" && this.container.value.length > 0){
-                    this.commands.push(new AddItemCommand(this.container.value, new Date().getTime()));
-                    this.container.value = "";
-                }
+        }
+        class ButtonView {
+            constructor(container, model, delegate){
+                this.container = container;
+                this.model = model;
+                this.delegate = delegate;
             }
         }
         class ListView {
-            constructor(container, events, commands){
+            constructor(container, model, delegate){
                 this.container = container;
-                this.events = events;
-                this.commands = commands;
-                this.commands.observe("push", this);
-                this.events.observe("push", this);
+                this.model = model;
+                this.delegate = delegate;
+                this.delegate.events.observe("append", this);
             }
             update(key, old, value){
-                if(value instanceof AddItemCommand) {
+                if(value instanceof SubmitNewItemRequest){
                     this.addNewItem(value);
+                    this.delegate.events.append(new ItemWasAdded(value.item, value.id));
                 }
-                if(value instanceof MouseEvent && value.target.title == "delete"){
-                    this.container.removeChild(value.target.parentNode);
-                }
-                if(value instanceof MouseEvent && value.type == "dblclick"){
-                    value.target.contentEditable = true;
-                }
-                if(value instanceof FocusEvent && value.type == "blur" && value.target.contentEditable){
-                    value.target.contentEditable = false;
-                    this.commands.push(new UpdateItemCommand(value.target.innerText, parseInt(value.target.id, 10)));
+                if(value instanceof DeleteItemRequest){
+                    this.remove(value.id);
+                    this.delegate.events.append(new ItemWasDeleted(value.item, value.id));
                 }
             }
-            addNewItem(addItemCommand){
-                this.container.innerHTML += `<li id="${addItemCommand.utcTimeInms}"><span>${addItemCommand.item}</span><button title="delete">Delete</button></li>`;
+            remove(id){
+                this.container.removeChild(this.container.querySelector(`#item_${id}`));
+            }
+            addNewItem(value){
+                this.container.innerHTML += `<li id="item_${value.id}"><span ondblclick="this.contentEditable=true" onblur="this.contentEditable=false;app.events.append(new UpdateItemRequest(this.innerText, ${value.id}));">${value.item}</span><button onclick="app.events.append(new DeleteItemRequest(${value.id}));" title="delete">Delete</button></li>`;
+            }
+        }
+        class ItemWasAdded {
+            constructor(item, id){
+                this.item = item;
+                this.id = id;
+                this.timestamp = new Date().getTime();
+            }
+        }
+        class ItemWasDeleted {
+            constructor(item, id){
+                this.item = item;
+                this.id = id;
+                this.timestamp = new Date().getTime();
+            }
+        }
+
+        class SubmitNewItemRequest {
+            constructor(newItem){
+                this.item = newItem;
+                this.id = new Date().getTime();
+                this.timestamp = new Date().getTime();
+            }
+        }
+        class DeleteItemRequest {
+            constructor(id){
+                this.id = id;
+                this.timestamp = new Date().getTime();
+            }
+        }
+        class UpdateItemRequest {
+            constructor(content, id){
+                this.id = id;
+                this.contnet = content;
+                this.timestamp = new Date().getTime();
             }
         }
         class FormView {
-            constructor(container, events, delegate){
+            constructor(container, model, delegate){
                 this.container = container;
-                this.events = events;
+                this.model = model;
                 this.delegate = delegate;
-                this.events.observe("push", this);
+                this.views = [];
+                this.views.push(new TextView(this.container.querySelector("#formView_item"), this.model, this));
+                this.views.push(new ButtonView(this.container.querySelector("#formView_button"), null, this));
+                this.container.addEventListener("submit", this.submit.bind(this), true);
             }
-            update(key, old, value){
-                if(value.target.parentNode != this.container) return;
-                if(value.type != "click") return;
-                value.preventDefault();
+            submit(e){
+                e.preventDefault();
+                const view = this.views.find(v => v instanceof TextView);
+                this.model.newItem = view.container.value;
+                if(this.model.newItem.length == 0) return;
+                this.delegate.events.append(new SubmitNewItemRequest(this.model.newItem));
+                this.model.newItem = "";
+                view.container.value = "";
             }
         }
-
-        const events = new ObservableList();
-        const commands = new ObservableList();
-        const t = new TextView(document.querySelector("[name='item']"), events, commands);
-        const f = new FormView(document.getElementById("formView"), events);
-        const l = new ListView(document.getElementById("stuffToDosView"), events, commands);
-        ["blur", "dblclick", "click", "keyup"].forEach(event => document.addEventListener(event, e => events.push(e), true));
+        const model = new KeyValueObservable({
+            newItem: ""
+        });
+        const app = {
+            views: new ObservableList(),
+            events: new ObservableLog()
+        };
+        app.views.push(new FormView(document.getElementById("formView"), model, app));
+        app.views.push(new ListView(document.getElementById("listView"), model, app));
 /*
-        f(events) -> state
+given these events, what's my state?
+    f(events) -> state
             match f(state, event) -> state
 
+how do you get new events in your log?
         f(state, command) -> events
 */
     </script>

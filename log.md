@@ -53,3 +53,36 @@ Today I tried using a Proxy for the observable code, but I couldn't find a way t
 **Link to work:**
 
 - [Github Pages](https://joeyguerra.github.io/100-days-of-code/)
+
+## Day 4: November 11, 2021
+
+**Today's Progress** Evolved code to use a mixture of event sourcing and MVC.
+
+**Thoughts:** Had a conversation this morning about Event Sourcing in the context of how I implemented it yesterday. The consensus is the DOM events are too low level to use for Event Sourcing. They aren't domain level events. So I refactored the code to convey domain level events. But I still like the reactivity and code cohesion characteristics of the MVC communication structure, so I implemented both, MVC and Event Sourcing.
+
+We also talked about the difference between a Command and Event. Anyone can tell me what to do. But the decision to or not to do is up to me, a sovereign entity. So when someone clicks the delete button, they are essentially requesting the app to delete the item. But it's up to the app to decide what to do with that request. Of course, it'll delete the item, but there's a distinct separation of ownership that results in even more flexible code in that the concerns are very clear in the code. In short, it makes for a more flexible codebase and application.
+
+One really cool quality of implementing Event Sourcing at a domain level is we have a log of events that look like this:
+
+```
+0 SubmitNewItemRequest {item: "testing", id: 1636687483872, timestamp: 1636687483872}
+1 ItemWasAdded {item: "testing", id: 1636687483872, timestamp: 1636687483873}
+2 SubmitNewItemRequest {item: "new events", id: 1636687485586, timestamp: 1636687485586}
+3 ItemWasAdded {item: "new events", id: 1636687485586, timestamp: 1636687485586}
+4 SubmitNewItemRequest {item: "remove", id: 1636687486662, timestamp: 1636687486662}
+5 ItemWasAdded {item: "remove", id: 1636687486662, timestamp: 1636687486663}
+6 SubmitNewItemRequest {item: "deltee", id: 1636687487583, timestamp: 1636687487583}
+7 ItemWasAdded {item: "deltee", id: 1636687487583, timestamp: 1636687487584}
+8 DeleteItemRequest {id: 1636687486662, timestamp: 1636687488929}
+9 ItemWasDeleted {item: undefined, id: 1636687486662, timestamp: 1636687488930}
+10 SubmitNewItemRequest {item: "new one", id: 1636687491052, timestamp: 1636687491052}
+11 ItemWasAdded {item: "new one", id: 1636687491052, timestamp: 1636687491053}
+12 SubmitNewItemRequest {item: "back and forth", id: 1636687493411, timestamp: 1636687493411}
+13 ItemWasAdded {item: "back and forth", id: 1636687493411, timestamp: 1636687493412}
+```
+
+which can be used to re-create the state of the app at any time. And I know precisely whats happened.
+
+**Link to work:**
+
+- [Github Pages](https://joeyguerra.github.io/100-days-of-code/)
