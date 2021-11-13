@@ -2,13 +2,26 @@
 <html>
     <head>
         <title>100 Days of Code</title>
+        <link href="main-layout.css" rel="stylesheet">
         <style>
-            label {
-                display: block;
+            main section {
+                display: flex;
+                flex-flow: row wrap;
+                align-items: stretch;
             }
-
-            input {
-                display: block;
+            main section article {
+                flex: auto;
+                height: 400px;
+                margin-right: 1em;
+            }
+            main section article h2 {
+                margin: 0;
+                padding: 0;
+            }
+            figure {
+                height: 120px;
+                margin: 0;
+                padding: 0;
             }
         </style>
     </head>
@@ -16,16 +29,132 @@
         <header>
             <h1>100 Days of Code</h1>
         </header>
+        <nav>
+            <h2>Site Nav</h2>
+            <ul>
+                <li>Home</li>
+                <li>Time Tracker</li>
+                <li>Web Shop</li>
+                <li><a href="stufftodos.html" title="Stuff Todos">Stuff Todos</a></li>
+            </ul>
+        </nav>
         <main>
-            <form id="formView">
-                <label for="name" id="formView_label">Just something to save</label>
-                <input type="text" id="formView_item" name="item" placeholder="Put something in here to save to the list" />
-                <button type="submit" id="formView_submit">Submit</button>
-            </form>
-            <ul id="listView"></ul>
+            <section id="productListView">
+                <article id="productView_globalUsing">
+                    <h2>
+                        <a href="https://www.bonfire.com/global-using-empathy-light-theme/?from=100daysofcode" title="Global Using Empthy - Light Theme">Global Using Empathy - Light Theme</a>
+                    </h2>
+                    <section>
+                        <figure>
+                            <img src="https://c.bonfireassets.com/thumb/design-image/835281b7-22ec-4806-94fd-929d6345cd8f/e4213c53-8052-4c44-ad64-9d06f2cda5e3/?size=150" title="Global Using Empathy - Light Theme" alt="Light t-shirt that says Global Using Empathy" />
+                        </figure>
+                    </section>
+                    <footer>
+                        <p>Proceeds benefit <a href="https://www.bonfire.com/org/black-girls-code-inc-454930539/">Black Girls Code Inc.</a></p>
+                        <form id="formView_gloablUsingEmpathy" action="https://www.bonfire.com/global-using-empathy-light-theme/?from=100daysofcode">
+                            <button type="submit" form="formView_gloablUsingEmpathy">Buy</button>
+                        </form>
+                    </footer>
+                </article>
+                <article id="productView_dotNetRun">
+                    <h2>
+                        <a href="https://www.bonfire.com/dot-net-run/?from=100daysofcode" title="Dot Net Run">Dot Net Run</a>
+                    </h2>
+                    <section>
+                        <figure>
+                            <img src="https://c.bonfireassets.com/thumb/design-image/a7142aa8-ce2a-4916-8914-89261e6325b2/7329f207-b69c-4f7e-8322-9f628fd81358/?size=150" title="Dot Net Run" alt="Black t-shirt that says Dot Net Run" />
+                        </figure>
+                    </section>
+                    <footer>
+                        <p>Proceeds benefit <a href="https://www.bonfire.com/org/black-girls-code-inc-454930539/">Black Girls Code Inc.</a></p>
+                        <form id="formView_dotNetRun" action="https://www.bonfire.com/dot-net-run/?from=100daysofcode">
+                            <button type="submit" form="formView_dotNetRun">Buy</button>
+                        </form>
+                    </footer>
+                </article>
+                <article id="productView_mauiMug">
+                    <h2>
+                        <a href="https://www.bonfire.com/net-maui-mug/?from=100daysofcode" title=".NET MAUI Mug">.NET MAUI Mug</a>
+                    </h2>
+                    <section>
+                        <figure>
+                            <img src="https://c.bonfireassets.com/thumb/design-image/4113640f-a316-40e1-a8b8-895d1b3deb65/83e306df-dddb-47a7-94ba-6a82487b39ab/?size=150" title=".NET MAUI Mug" alt="Mug that says .NET MAUI Mug" />
+                        <figure>
+                    </section>
+                    <footer>
+                        <p>Proceeds benefit <a href="https://www.bonfire.com/org/black-girls-code-inc-454930539/">Black Girls Code Inc.</a></p>
+                        <form id="formView_mauiMug" action="https://www.bonfire.com/net-maui-mug/?from=100daysofcode">
+                            <button type="submit" form="formView_mauiMug">Buy</button>
+                        </form>
+                    </footer>
+                </article>
+                <article id="productView_mauiShirtDarkMode">
+                    <h2>
+                        <a href="https://www.bonfire.com/dotnet-maui-dark/?from=100daysofcode" title=".NET MAUI Shirt Dark Mode">.NET MAUI Shirt Dark Mode</a>
+                    </h2>
+                    <section>
+                        <figure>
+                            <img src="https://c.bonfireassets.com/thumb/design-image/33d46142-6edb-42ab-9a98-8f629f795e12/a12f1364-34a5-4ab3-bcd5-fb45910a2e8f/?size=150" title=".NET MAUI Shirt Dark Mode" alt="Black T-Shirt that says using Microsoft.Maui;" />
+                        </figure>
+                    </section>
+                    <footer>
+                        <p>Proceeds benefit <a href="https://www.bonfire.com/org/black-girls-code-inc-454930539/">Black Girls Code Inc.</a></p>
+                        <form id="formView_mauiShirtDarkMode" action="https://www.bonfire.com/dotnet-maui-dark/?from=100daysofcode">
+                            <button type="submit" form="formView_mauiShirtDarkMode">Buy</button>
+                        </form>
+                    </footer>
+                </article>
+                <article id="productView_button2020DjEqShirt">
+                    <h2>
+                        <a href="https://www.bonfire.com/button-2020-dj-eq-shirt/" title="Button 2020 DJ EQ Shirt">Button 2020 DJ EQ Shirt</a>
+                    </h2>
+                    <section>
+                        <figure>
+                            <img src="https://c.bonfireassets.com/thumb/design-image/bcf8f4c9-d4bb-4534-a4b8-61e64bbd28e7/356b92fe-d24f-4563-a83c-148f2b248756/?size=150" title="Button 2020 DJ EQ Shirt" alt="Dark colored T-Shirt with a histogram chart made up from different colored circles" />
+                        </figure>
+                    </section>
+                    <footer>
+                        <p>Proceeds benefit <a href="https://www.bonfire.com/org/black-girls-code-inc-454930539/">Black Girls Code Inc.</a></p>
+                        <form id="formView_button2020DjEqShirt" action="https://www.bonfire.com/button-2020-dj-eq-shirt/">
+                            <button type="submit" form="formView_button2020DjEqShirt">Buy</button>
+                        </form>
+                    </footer>
+                </article>
+                <article id="productView_confab2015">
+                    <h2>
+                        <a href="https://www.bonfire.com/confab-2015/" title="Confab 2015">Confab 2015</a>
+                    </h2>
+                    <section>
+                        <figure>
+                            <img src="https://c.bonfireassets.com/thumb/design-image/5eb8148f-d0cc-4a82-9af6-c5ccaa7041c6/a12f1364-34a5-4ab3-bcd5-fb45910a2e8f/?size=150" title="Confab 2015" alt="Black T-Shirt with a cartoon rocket in the middle of a circle, says mission critical across the front" />
+                        </figure>
+                    </section>
+                    <footer>
+                        <p>Proceeds benefit <a href="https://www.bonfire.com/org/black-girls-code-inc-454930539/">Black Girls Code Inc.</a></p>
+                        <form id="formView_confab2015" action="https://www.bonfire.com/confab-2015/">
+                            <button type="submit" form="formView_confab2015">Buy</button>
+                        </form>
+                    </footer>
+                </article>
+                <article id="productView_heyFriends">
+                    <h2>
+                        <a href="https://www.bonfire.com/hey-friends/" title="Hey Friends!">Hey Friends!</a>
+                    </h2>
+                    <section>
+                        <figure>
+                            <img src="https://c.bonfireassets.com/thumb/design-image/1f8452cb-aae9-4ea9-91e3-d07aa0b4b48c/1bec9fd2-251a-42ed-89d6-2433030918a3/?size=150" title="Hey Friends!" alt="Pink T-Shirt with a 2 cartoonish people facing each other, smiling, with the left person handing the other a heart" />
+                        </figure>
+                    </section>
+                    <footer>
+                        <p>Proceeds benefit <a href="https://www.bonfire.com/org/black-girls-code-inc-454930539/">Black Girls Code Inc.</a></p>
+                        <form id="formView_heyFriends" action="https://www.bonfire.com/hey-friends/">
+                            <button type="submit" form="formView_heyFriends">Buy</button>
+                        </form>
+                    </footer>
+                </article>
+            </section>
         </main>
         <footer>
-
         </footer>
     </body>
     <script>
@@ -106,31 +235,6 @@
             }
         }
 
-        class AddItemCommand {
-            constructor(item, utcTimeInms){
-                this.item = item;
-                this.utcTimeInms = utcTimeInms;
-            }
-        }
-        class DeleteItemCommand {
-            constructor(id){
-                this.id = id;
-            }
-        }
-        class UpdateItemCommand {
-            constructor(item, utcTimeInms){
-                this.item = item;
-                this.utcTimeInms = utcTimeInms;
-            }
-        }
-
-        class TextView {
-            constructor(container, model, delegate){
-                this.container = container;
-                this.model = model;
-                this.delegate = delegate;
-            }
-        }
         class ButtonView {
             constructor(container, model, delegate){
                 this.container = container;
@@ -162,61 +266,7 @@
                 this.container.innerHTML += `<li id="item_${value.id}"><span ondblclick="this.contentEditable=true" onblur="this.contentEditable=false;app.events.append(new UpdateItemRequest(this.innerText, ${value.id}));">${value.item}</span><button onclick="app.events.append(new DeleteItemRequest(${value.id}));" title="delete">Delete</button></li>`;
             }
         }
-        class ItemWasAdded {
-            constructor(item, id){
-                this.item = item;
-                this.id = id;
-                this.timestamp = new Date().getTime();
-            }
-        }
-        class ItemWasDeleted {
-            constructor(item, id){
-                this.item = item;
-                this.id = id;
-                this.timestamp = new Date().getTime();
-            }
-        }
-
-        class SubmitNewItemRequest {
-            constructor(newItem){
-                this.item = newItem;
-                this.id = new Date().getTime();
-                this.timestamp = new Date().getTime();
-            }
-        }
-        class DeleteItemRequest {
-            constructor(id){
-                this.id = id;
-                this.timestamp = new Date().getTime();
-            }
-        }
-        class UpdateItemRequest {
-            constructor(content, id){
-                this.id = id;
-                this.contnet = content;
-                this.timestamp = new Date().getTime();
-            }
-        }
-        class FormView {
-            constructor(container, model, delegate){
-                this.container = container;
-                this.model = model;
-                this.delegate = delegate;
-                this.views = [];
-                this.views.push(new TextView(this.container.querySelector("#formView_item"), this.model, this));
-                this.views.push(new ButtonView(this.container.querySelector("#formView_button"), null, this));
-                this.container.addEventListener("submit", this.submit.bind(this), true);
-            }
-            submit(e){
-                e.preventDefault();
-                const view = this.views.find(v => v instanceof TextView);
-                this.model.newItem = view.container.value;
-                if(this.model.newItem.length == 0) return;
-                this.delegate.events.append(new SubmitNewItemRequest(this.model.newItem));
-                this.model.newItem = "";
-                view.container.value = "";
-            }
-        }
+        
         const model = new KeyValueObservable({
             newItem: ""
         });
@@ -224,15 +274,5 @@
             views: new ObservableList(),
             events: new ObservableLog()
         };
-        app.views.push(new FormView(document.getElementById("formView"), model, app));
-        app.views.push(new ListView(document.getElementById("listView"), model, app));
-/*
-given these events, what's my state?
-    f(events) -> state
-            match f(state, event) -> state
-
-how do you get new events in your log?
-        f(state, command) -> events
-*/
     </script>
 </html>

@@ -86,3 +86,26 @@ which can be used to re-create the state of the app at any time. And I know prec
 **Link to work:**
 
 - [Github Pages](https://joeyguerra.github.io/100-days-of-code/)
+
+## Day 5: November 12, 2021
+
+**Today's Progress** The only thing I did was think about building an e-commerce site. I read over the Mozilla Developer docs for HTML. Thought about using Schema.org for marking up the product HTML, or using microformats for a hot second.
+
+**Thoughts:** It's hard to keep momentum going without a concrete idea to work on.
+
+**Link to work:**
+
+- [Mozilla Dev Docs](https://developer.mozilla.org/en-US/docs/Learn/HTML/)
+- [Schema.org](https://schema.org)
+- [Microformat](https://developer.mozilla.org/en-US/docs/Web/HTML/microformats)
+
+## Day 6: November 13, 2021
+
+**Today's Progress** Added some products. Styled the main page and product listing. Created a new file for stuff todos code. Added a nav.
+
+**Thoughts:** Just start. I'm building an e-commerce page. I thought I'd help out the Black Girls Code organization by linking to their Bonfire products.
+
+**Link to work:**
+
+- [Github Pages](https://joeyguerra.github.io/100-days-of-code/)
+
