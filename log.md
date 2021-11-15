@@ -109,3 +109,13 @@ which can be used to re-create the state of the app at any time. And I know prec
 
 - [Github Pages](https://joeyguerra.github.io/100-days-of-code/)
 
+## Day 7: November 14, 2021
+
+**Today's Progress** Started a search view.
+
+**Thoughts:** Building the ability to find products based on a search term.
+
+**Link to work:**
+
+- [Github Pages](https://joeyguerra.github.io/100-days-of-code/)
+

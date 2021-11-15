@@ -37,6 +37,7 @@
                 <li>Web Shop</li>
                 <li><a href="stufftodos.html" title="Stuff Todos">Stuff Todos</a></li>
             </ul>
+            <input type="text" id="searchTermView" />
         </nav>
         <main>
             <section id="productListView">
@@ -242,37 +243,55 @@
                 this.delegate = delegate;
             }
         }
-        class ListView {
+        class ProductListView {
             constructor(container, model, delegate){
                 this.container = container;
                 this.model = model;
                 this.delegate = delegate;
-                this.delegate.events.observe("append", this);
+                this.template = this.container.querySelector("article").cloneNode(true);
+                this.model.displayedProducts.observe("push", this);
+                this.model.displayedProducts.observe("remove", this);
+                this.wasInitialized = false;
+                this.model.observe("searchTerm", this);
             }
             update(key, old, value){
-                if(value instanceof SubmitNewItemRequest){
-                    this.addNewItem(value);
-                    this.delegate.events.append(new ItemWasAdded(value.item, value.id));
+                if(!this.wasInitialized) {
+                    this.container.innerHTML = "";
+                    this.wasInitialized = true;
                 }
-                if(value instanceof DeleteItemRequest){
-                    this.remove(value.id);
-                    this.delegate.events.append(new ItemWasDeleted(value.item, value.id));
+                if(key == "searchTerm"){
+                    value.split("").map(c => products.find(product=>product.indexOf(c) > -1))
                 }
             }
-            remove(id){
-                this.container.removeChild(this.container.querySelector(`#item_${id}`));
+        }
+        class SearchTermView {
+            constructor(container, model, delegate){
+                this.container = container;
+                this.model = model;
+                this.delegate = delegate;
+                this.container.addEventListener("keyup", this, true);
             }
-            addNewItem(value){
-                this.container.innerHTML += `<li id="item_${value.id}"><span ondblclick="this.contentEditable=true" onblur="this.contentEditable=false;app.events.append(new UpdateItemRequest(this.innerText, ${value.id}));">${value.item}</span><button onclick="app.events.append(new DeleteItemRequest(${value.id}));" title="delete">Delete</button></li>`;
+            handleEvent(e){
+                this.model.searchTerm = e.target.value;
             }
         }
         
         const model = new KeyValueObservable({
-            newItem: ""
+            searchTerm: "",
+            products: [...document.getElementById("productListView").querySelectorAll("article")].map(article => {
+                return {
+                    title: article.querySelector("h2 a").title,
+                    href: article.querySelector("h2 a").href
+                }
+            }),
+            displayedProducts: new ObservableList()
         });
         const app = {
             views: new ObservableList(),
             events: new ObservableLog()
         };
+
+        app.views.push(new SearchTermView(document.getElementById("searchTermView"), model, app));
+        app.views.push(new ProductListView(document.getElementById("productListView"), model, app));
     </script>
 </html>
