@@ -243,6 +243,11 @@
                 this.delegate = delegate;
             }
         }
+        let timer = null;
+        const debounce = (fn, timeout)=>{
+            clearTimeout(timer);
+            timer = setTimeout(fn, timeout);
+        };
         class ProductListView {
             constructor(container, model, delegate){
                 this.container = container;
@@ -251,17 +256,28 @@
                 this.template = this.container.querySelector("article").cloneNode(true);
                 this.model.displayedProducts.observe("push", this);
                 this.model.displayedProducts.observe("remove", this);
-                this.wasInitialized = false;
                 this.model.observe("searchTerm", this);
             }
             update(key, old, value){
-                if(!this.wasInitialized) {
-                    this.container.innerHTML = "";
-                    this.wasInitialized = true;
-                }
+                this.container.innerHTML = "";
                 if(key == "searchTerm"){
-                    value.split("").map(c => products.find(product=>product.indexOf(c) > -1))
+                    debounce(function(){
+                        const found = this.model.products.filter(product=>product.title.toLowerCase().indexOf(value.toLowerCase()) > -1);
+                        this.add(found);
+                    }.bind(this), 100);
                 }
+            }
+            add(products){
+                if(products == null || products.length == 0) return;
+                const nodes = products.map(p => {
+                    let elem = this.template.cloneNode(true);
+                    elem.querySelector("h2 a").innerText = p.title;
+                    elem.querySelector("h2 a").href = p.href;
+                    elem.querySelector("img").src = p.src;
+                    elem.querySelector("form").action = p.href;
+                    return elem;
+                });
+                nodes.forEach(n=>this.container.appendChild(n));
             }
         }
         class SearchTermView {
@@ -281,7 +297,8 @@
             products: [...document.getElementById("productListView").querySelectorAll("article")].map(article => {
                 return {
                     title: article.querySelector("h2 a").title,
-                    href: article.querySelector("h2 a").href
+                    href: article.querySelector("h2 a").href,
+                    src: article.querySelector("img").src
                 }
             }),
             displayedProducts: new ObservableList()

@@ -119,3 +119,13 @@ which can be used to re-create the state of the app at any time. And I know prec
 
 - [Github Pages](https://joeyguerra.github.io/100-days-of-code/)
 
+## Day 8: November 15, 2021
+
+**Today's Progress** Implement naive search functionality.
+
+**Thoughts:** There's lots of scenarios to consider for the search functionality. i.e. what happens when the person clicks buy, and then the back button? Sould the page remember their search results and search term?.
+
+**Link to work:**
+
+- [Github Pages](https://joeyguerra.github.io/100-days-of-code/)
+
