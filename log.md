@@ -129,3 +129,25 @@ which can be used to re-create the state of the app at any time. And I know prec
 
 - [Github Pages](https://joeyguerra.github.io/100-days-of-code/)
 
+## Day 9: November 16, 2021
+
+**Today's Progress** Skipped it. Kids school activity.
+
+**Thoughts:** Some things are more important.
+
+**Link to work:**
+
+- [Github Pages](https://joeyguerra.github.io/100-days-of-code/)
+
+## Day 10: November 17, 2021
+
+**Today's Progress**
+
+- Practice TDD
+- Built a static web server
+
+**Thoughts:** Practicing TDD is refreshing. I code fearlessly. Also, was having a conversation about this morning about how coding in React is nice because it enables organizing the code in folders as components and modules. So I wanted to figure out how to enable that without a framework. Which means I can no longer go without using a webserver. So I built one.
+
+**Link to work:**
+
+- [Github Pages](https://joeyguerra.github.io/100-days-of-code/)

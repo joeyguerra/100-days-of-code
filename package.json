@@ -1,0 +1,26 @@
+{
+  "name": "100daysofcode",
+  "version": "1.0.0",
+  "description": "Joey's 100 days of code",
+  "main": "webserver.mjs",
+  "directories": {
+    "example": "examples"
+  },
+  "scripts": {
+    "test": "mocha --parallel examples/**/*.mjs",
+    "test:watch": "mocha --watch --parallel"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joeyguerra/100-days-of-code.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/joeyguerra/100-days-of-code/issues"
+  },
+  "homepage": "https://github.com/joeyguerra/100-days-of-code#readme",
+  "devDependencies": {
+    "mocha": "^9.1.3"
+  }
+}
