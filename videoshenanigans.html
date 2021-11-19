@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>100 Days of Code: Stuff Todos</title>
+        <link href="main-layout.css" rel="stylesheet">
+        <style>
+            button {
+                height: 2em;
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <h1>Stuff Todos</h1>
+        </header>
+        <nav>
+            <h2>Site Nav</h2>
+            <ul>
+                <li><a href="index.html" title="Home">Home</a></li>
+                <li>Time Tracker</li>
+                <li>Web Shop</li>
+                <li><a href="stufftodos.html" title="Stuff Todos">Stuff Todos</a></li>
+                <li>Video Shenanigans</li>
+            </ul>
+        </nav>
+        <main>
+            <button id="startVideoButton">Start Video</button>
+        </main>
+        <footer>
+        </footer>
+    </body>
+    <script>
+        class KeyValueObservable {
+            constructor(observable = {}){
+                this.dependents = {};
+                observable = observable || {};
+                const changed = this.changed.bind(this);
+                const cached = Object.assign({}, observable);
+                Object.keys(observable).forEach(key => {
+                    Reflect.defineProperty(this, key, {
+                        get(){
+                            return cached[key];
+                        },
+                        set(value){
+                            const old = cached[key];
+                            cached[key] = value;
+                            changed(key, old, value);
+                        }
+                    })
+                })
+            }
+            changed(key, old, value){
+                if(!this.dependents[key]) return;
+                this.dependents[key]?.forEach(o=>o.update(key, old, value));
+            }
+            observe(key, dependent){
+                if(!this.dependents[key]) this.dependents[key] = [];
+                this.dependents[key].push(dependent);
+            }
+            commit(){
+
+            }
+        }
+
+        class ObservableLog extends Array{
+            constructor(...args) {
+                super(...args);
+                this.observable = new KeyValueObservable(null);
+            }
+            append(item){
+                super.push(item);
+                this.observable.changed("append", null, item);
+            }
+            observe(key, observer){
+                this.observable.observe(key, observer);
+            }
+        }
+        class ObservableList extends Array{
+            constructor(...args) {
+                super(...args);
+                this.observable = new KeyValueObservable(null);
+            }
+            push(item){
+                super.push(item);
+                this.observable.changed("push", null, item);
+            }
+            pop(){
+                const item = super.pop();
+                this.observable.changed("pop", null, item);
+                return item;
+            }
+            remove(d){
+                let i = 0;
+                let ubounds = this.length;
+                let deleted = [];
+                for(i; i<ubounds;i++){
+                    if(d(this[i], i)){
+                        deleted = this.splice(i, 1);
+                        this.delegate.changed("remove", deleted[0], i);
+                        break;
+                    }
+                }
+                return deleted[0];
+            }
+            observe(key, observer){
+                this.observable.observe(key, observer);
+            }
+        }
+        
+        const model = new KeyValueObservable({
+            newItem: ""
+        });
+        const app = {
+            views: new ObservableList(),
+            events: new ObservableLog(),
+            async startCapture(mediaTrackConstraints){
+                const canvas = document.createElement("canvas");
+                const context = canvas.getContext("2d");
+                const video = document.createElement("video");
+
+                video.width = mediaTrackConstraints.video.width;
+                video.height = mediaTrackConstraints.video.height;
+
+                canvas.width = mediaTrackConstraints.video.width;
+                canvas.height = mediaTrackConstraints.video.height;
+                const aspectRatio = window.innerWidth / window.innerHeight;
+                try {
+                    const captureStream = await navigator.mediaDevices.getDisplayMedia(mediaTrackConstraints);
+                    video.srcObject = captureStream;
+                    video.srcObject.getVideoTracks()[0].applyConstraints(mediaTrackConstraints.video);
+                    video.addEventListener('loadedmetadata', e => {
+                        video.play();
+                        video.pause();
+                        context.drawImage(video, 0, 0, video.width, video.height);
+                        const frame = canvas.toDataURL("image/png");
+                        const img = new Image();
+                        img.src = frame;
+                        img.height = aspectRatio * 200;
+                        document.querySelector('main').appendChild(img);
+                    }, 5000);
+                    video.play();
+                } catch (err) {
+                    console.error("Error: " + err);
+                }
+            }
+
+            // async startCapture(mediaTrackConstraints) {
+            //     const canvas = document.createElement('canvas');
+            //     const context = canvas.getContext('2d');
+            //     const video = document.createElement('video');
+            //     canvas.width = video.width;
+            //     canvas.height = video.height;
+            //     video.height = window.innerHeight;
+            //     video.width = window.innerWidth;
+            //     try {
+            //         video.srcObject = await navigator.mediaDevices.getDisplayMedia(mediaTrackConstraints);
+            //         video.addEventListener('playing', e => {
+            //             // see: https://developer.mozilla.org/en-US/docs/Web/API/HTMLVideoElement
+            //             context.drawImage(video, 0, 0, video.width, video.height);
+            //             setTimeout(()=>video.pause(), 6000);
+            //             const frame = canvas.toDataURL("image/png");
+            //             const img = new Image();
+            //             img.width = 400;
+            //             img.src = frame;
+            //             document.querySelector('main').appendChild(img);
+            //         }, true);
+            //         video.play();
+            //     } catch(err) {
+            //         console.error("Error: " + err);
+            //     }
+            //     return video.srcObject;
+            // }
+        };
+        class StartVideoButton {
+            constructor(container, model, delegate){
+                this.container = container;
+                this.model = model;
+                this.delegate = delegate;
+                this.container.addEventListener('click', this, true);
+            }
+            async handleEvent(e){
+                if(e.type === 'click'){
+                    const width = screen.width * (window.devicePixelRatio || 1);
+                    const height = screen.height * (window.devicePixelRatio || 1);
+                    await this.delegate.startCapture({video: {width, height, frameRate: 1, displaySurface: 'browser'}, audio: false});
+                }
+            }
+        }
+        app.views.push(new StartVideoButton(document.getElementById("startVideoButton"), model, app));
+    </script>
+</html>

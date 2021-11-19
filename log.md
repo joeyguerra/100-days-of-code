@@ -151,3 +151,15 @@ which can be used to re-create the state of the app at any time. And I know prec
 **Link to work:**
 
 - [Github Pages](https://joeyguerra.github.io/100-days-of-code/)
+
+## Day 11: November 18, 2021
+
+**Today's Progress**
+
+- Build screen shot with capture api
+
+**Thoughts:** I want to see what the user sees when they run into an error. So I'm going to provide a "submit error" button so the user can click on it and I can get a screen shot of the web app at the time of the error.
+
+**Link to work:**
+
+- [Github Pages](https://joeyguerra.github.io/100-days-of-code/videoshenanigans.html)
