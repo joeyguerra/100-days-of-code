@@ -2,13 +2,14 @@
   "name": "100daysofcode",
   "version": "1.0.0",
   "description": "Joey's 100 days of code",
-  "main": "webserver.mjs",
+  "main": "server.mjs",
   "directories": {
     "example": "examples"
   },
   "scripts": {
     "test": "mocha --parallel examples/**/*.mjs",
-    "test:watch": "mocha --watch --parallel"
+    "test:watch": "mocha --watch --parallel",
+    "start": "node server.mjs"
   },
   "repository": {
     "type": "git",

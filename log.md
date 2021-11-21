@@ -163,3 +163,15 @@ which can be used to re-create the state of the app at any time. And I know prec
 **Link to work:**
 
 - [Github Pages](https://joeyguerra.github.io/100-days-of-code/videoshenanigans.html)
+
+## Day 12: November 19, 2021
+
+**Today's Progress**
+
+- Screen shot just the browser window
+
+**Thoughts:** Safari doesn't allow you to pick or set what gets screen shared, it's all or nothing. So I wrote code to crop the image.
+
+**Link to work:**
+
+- [Github Pages](https://joeyguerra.github.io/100-days-of-code/videoshenanigans.html)
