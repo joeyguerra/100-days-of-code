@@ -31,10 +31,19 @@ const HttpGet = async url => {
 
 const WebServer = http.createServer((req, res) => {
     if(req.url == '/') req.url = '/index.html';
+    if(req.url.indexOf('favicon') > -1) {
+        res.writeHead(404);
+        res.end();
+        return;
+    }
     const parsedPath = path.parse(req.url);
     const contentType = ContentTypes[parsedPath.ext.replace('.', '')] || 'text/plain';
     res.writeHead(200, {'Content-Type': contentType});
-    fs.createReadStream(path.join('.', parsedPath.dir, parsedPath.base)).pipe(res);
+    fs.createReadStream(path.join('.', parsedPath.dir, parsedPath.base)).on('error', err => {
+        console.log(err);
+        res.writeHead(404);
+        res.end();    
+    }).pipe(res);
 });
 export {
     WebServer,

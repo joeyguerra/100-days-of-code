@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>100 Days of Code: Photo Collage</title>
+        <link href="main-layout.css" rel="stylesheet">
+        <style>
+            button {
+                height: 2em;
+            }
+            main {
+                display: block;
+
+            }
+            #photoListView {
+                display: flex;
+                flex-wrap: wrap;
+            }
+            #photoListView li {
+                display: block;
+                margin: 0.5em;
+                width: 200px;
+                height: 200px;
+                border: 1px solid black;
+                background-color: peru;
+                cursor: pointer;
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <h1>Photo Collage</h1>
+        </header>
+        <nav>
+            <h2>Site Nav</h2>
+            <ul>
+                <li><a href="index.html" title="Home">Home</a></li>
+                <li>Time Tracker</li>
+                <li>Web Shop</li>
+                <li><a href="stufftodos.html" title="Stuff Todos">Stuff Todos</a></li>
+                <li><a href="videoshenanigans.html" title="Video Shenanigans">Video Shenanigans</a></li>
+                <li>Photo Collage</li>
+            </ul>
+        </nav>
+        <main>
+            <form method="post">
+                <fieldset>
+                    <legend>Upload Photos</legend>
+                    <input type="file" id="photoUploadView" multiple>
+                </fieldset>
+            </form>
+            <ul id="photoListView"></ul>
+            <ul id="collageView"></ul>
+        </main>
+        <footer>
+        </footer>
+    </body>
+    <script>
+        class KeyValueObservable {
+            constructor(observable = {}){
+                this.dependents = {};
+                observable = observable || {};
+                const changed = this.changed.bind(this);
+                const cached = Object.assign({}, observable);
+                Object.keys(observable).forEach(key => {
+                    Reflect.defineProperty(this, key, {
+                        get(){
+                            return cached[key];
+                        },
+                        set(value){
+                            const old = cached[key];
+                            cached[key] = value;
+                            changed(key, old, value);
+                        }
+                    })
+                })
+            }
+            changed(key, old, value){
+                if(!this.dependents[key]) return;
+                this.dependents[key]?.forEach(o=>o.update(key, old, value));
+            }
+            observe(key, dependent){
+                if(!this.dependents[key]) this.dependents[key] = [];
+                this.dependents[key].push(dependent);
+            }
+            commit(){
+
+            }
+        }
+
+        class ObservableLog extends Array{
+            constructor(...args) {
+                super(...args);
+                this.observable = new KeyValueObservable(null);
+            }
+            append(item){
+                super.push(item);
+                this.observable.changed("append", null, item);
+            }
+            observe(key, observer){
+                this.observable.observe(key, observer);
+            }
+        }
+        class ObservableList extends Array{
+            constructor(...args) {
+                super(...args);
+                this.observable = new KeyValueObservable(null);
+            }
+            push(item){
+                super.push(item);
+                this.observable.changed("push", null, item);
+            }
+            pop(){
+                const item = super.pop();
+                this.observable.changed("pop", null, item);
+                return item;
+            }
+            remove(d){
+                let i = 0;
+                let ubounds = this.length;
+                let deleted = [];
+                for(i; i<ubounds;i++){
+                    if(d(this[i], i)){
+                        deleted = this.splice(i, 1);
+                        this.delegate.changed("remove", deleted[0], i);
+                        break;
+                    }
+                }
+                return deleted[0];
+            }
+            observe(key, observer){
+                this.observable.observe(key, observer);
+            }
+        }
+
+        const app = {
+            views: new ObservableList(),
+            events: new ObservableLog(),
+            model: new ObservableList(),
+            createElement(tag){
+                return document.createElement(tag);
+            }
+        };
+        class PhotoView {
+            constructor(container, model, delegate){
+                this.container = container;
+                this.model = model;
+                this.delegate = delegate;
+                this.container.appendChild(model.value);
+                this.model.value.draggable = true;
+                this.model.value.addEventListener('dragstart', this, true);
+                this.model.value.addEventListener('dragend', this, true);
+                this.model.value.addEventListener('dragenter', this, true);
+                this.model.value.addEventListener('dragover', this, true);
+                this.model.value.addEventListener('dragleave', this, true);
+                this.model.value.addEventListener('drop', this, true);
+            }
+            handleEvent(e){
+                switch(e.type){
+                    case 'dragstart':
+                        this.delegate.dragstart(e);
+                        break;
+                    case 'dragend':
+                        const data = e.dataTransfer.getData('text/plain');
+                        this.delegate.dragend(e);
+                        console.log(e);
+                    default:
+                        break;
+                }
+            }
+        }
+        class DroppableListView {
+            constructor(container, model, delegate){
+                this.container = container;
+                this.model = model;
+                this.delegate = delegate;
+                this.container.droppable = true;
+            }
+        }
+        class DraggableListView {
+            constructor(container, model, delegate){
+                this.container = container;
+                this.model = model;
+                this.delegate = delegate;
+                this.model.observe('push', this);
+                this.views = [];
+            }
+            update(key, old, value){
+                switch(key){
+                    case 'push':
+                        const li = this.delegate.createElement('li');
+                        this.views.push(new PhotoView(li, {value}, this));
+                        this.container.appendChild(li);
+                        break;
+                    default:
+                        break;
+                }
+            }
+            dragstart(e){
+                
+            }
+            dragend(e){
+                console.log(e);
+            }
+        }
+        class PhotoListView {
+            constructor(container, model, delegate){
+                this.container = container;
+                // this.container.width = 6 * 200;
+                // this.container.height = 6 * 200;
+                // this.context = this.container.getContext('2d');
+                this.model = model;
+                this.delegate = delegate;
+                // this.columns = 6;
+                // this.rows = 6;
+                this.model.observe('push', this);
+            }
+            cropImage(img){
+                const aspectRatio = img.width / img.height;
+                const square = {width: img.width, height: img.height};
+                const topLeft = {x: 0, y: 0};
+                if(aspectRatio > 1){
+                    square.width = square.height;
+                    topLeft.x = -1 * Math.floor((img.width - img.height) / 2);
+                } else {
+                    square.height = square.width;
+                    topLeft.y = Math.floor((img.height - img.width) / 2);
+                }
+                return {square, topLeft};
+            }
+            update(key, old, value){
+                const newSize = this.cropImage(value);
+                const canvas = this.delegate.createElement('canvas');
+                const context = canvas.getContext('2d');
+                canvas.width = newSize.square.width;
+                canvas.height = newSize.square.height;
+                context.drawImage(value, newSize.topLeft.x, newSize.topLeft.y, value.width, value.height);
+                const li = this.delegate.createElement('li');
+                li.appendChild(canvas);
+                this.container.appendChild(li);
+                //this.context.drawImage(value, this.model.length * newSize.topLeft.x, this.model.length * newSize.topLeft.y, value.width, value.height);
+            }
+        }
+        class PhotoUploadView {
+            constructor(container, model, delegate){
+                this.container = container;
+                this.model = model;
+                this.delegate = delegate;
+                this.container.addEventListener('change', this, true);
+            }
+            async handleEvent(e){
+                if(e.type === 'change'){
+                    const files = e.target.files;
+                    for(let i = 0; i<files.length; i++){
+                        const file = files[i];
+                        const reader = new FileReader();
+                        reader.addEventListener('load', this, true);
+                        reader.readAsDataURL(file);
+                    }
+                }
+                if(e.type == 'load') {
+                    const img = new Image();
+                    img.addEventListener('load', e => {
+                        const ar = img.width / img.height;
+                        img.width = 200 * ar;
+                        img.height = 200;
+                        this.model.push(img);
+                    }, true);
+                    img.src = e.target.result;
+                }
+            }
+        }
+        app.views.push(new PhotoUploadView(document.getElementById('photoUploadView'), app.model, app));
+        app.views.push(new DraggableListView(document.getElementById('photoListView'), app.model, app));
+    </script>
+</html>

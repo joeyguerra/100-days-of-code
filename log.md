@@ -175,3 +175,44 @@ which can be used to re-create the state of the app at any time. And I know prec
 **Link to work:**
 
 - [Github Pages](https://joeyguerra.github.io/100-days-of-code/videoshenanigans.html)
+
+## Day 13: November 26, 2021
+
+**Today's Progress**
+
+- Decided to build a photo collage builder
+- Build multi image uploader
+- Crop images to a specified size
+- Add to a canvas object
+
+**Thoughts:** I want to build a photo collage for a Christmas card.
+
+**Link to work:**
+
+- [Github Pages](https://joeyguerra.github.io/100-days-of-code/collage.html)
+
+## Day 14: November 29, 2021
+
+**Today's Progress**
+
+- Make separate html elements for each photo
+
+
+**Thoughts:** I want to pick where photo goes in the collage.
+
+**Link to work:**
+
+- [Github Pages](https://joeyguerra.github.io/100-days-of-code/collage.html)
+
+## Day 15: Dec 2, 2021
+
+**Today's Progress**
+
+- Explore dragging and dropping an image
+
+
+**Thoughts:** How am I going to figure out where to drop the image in the list?
+
+**Link to work:**
+
+- [Github Pages](https://joeyguerra.github.io/100-days-of-code/collage.html)
