@@ -1,8 +1,8 @@
 import assert from 'assert';
 import ObservableLog from '../ObservableLog.mjs';
 
-describe('just starting up', ()=>{
-    it('should just do something', ()=>{
+describe('Event Sourcing inventory', ()=>{
+    it('Receiving an AdjustInventory command should result in an InventoryWasAdjusted event', ()=>{
         const command = new AdjustInventory('123', 3, 'DC1');
         const expected = new ObservableLog(new InventoryWasAdjusted('123', 3, 'DC1'));
         const domain = new Domain();
@@ -12,7 +12,7 @@ describe('just starting up', ()=>{
         }
         assert.deepEqual(actual, expected, 'should be a list of 1 events');
     });
-    it('should take events and produce state', ()=>{
+    it('InventoryViewBuilder should build itself with an InventoryWasAdjusted event', ()=>{
         const events = new ObservableLog(new InventoryWasAdjusted('123', 3, 'DC1'));
         const expected = {
             sku: '123',
@@ -23,7 +23,7 @@ describe('just starting up', ()=>{
         const actual = viewBuidler.apply({quantity: 0}, events);
         assert.deepEqual(actual, expected);
     });
-    it('should add the adjusted quantity to the inventory', ()=>{
+    it('2 InventoryWasAdjusted events should result in the correct inventory quantity', ()=>{
         const events = new ObservableLog(
             new InventoryWasAdjusted('123', 3, 'DC1'),
             new InventoryWasAdjusted('123', -1, 'DC1')
@@ -37,7 +37,7 @@ describe('just starting up', ()=>{
         const actual = viewBuidler.apply({quantity: 0}, events);
         assert.deepEqual(actual, expected);
     });
-    it('should never be less than zero', ()=>{
+    it('Negative InventoryWasAdjusted events should not cause inventory to go below zero', ()=>{
         const events = new ObservableLog(
             new InventoryWasAdjusted('123', 3, 'DC1'),
             new InventoryWasAdjusted('123', -4, 'DC1')
@@ -57,6 +57,7 @@ describe('just starting up', ()=>{
     });
 });
 
+// View builder
 class InventoryViewBuilder {
     constructor(){}
     apply(initial, events){
@@ -73,6 +74,7 @@ class InventoryViewBuilder {
     }
 }
 
+// Model
 class Inventory {
     constructor(sku, quantity, location){
         this.sku = sku;
@@ -89,20 +91,31 @@ receive commands
 f(state, command) -> events
 */
 
+// Domain
 class Domain {
+    #adjustInventory = new AdjustInventory();
     constructor() {}
     *receive(command) {
-        yield new InventoryWasAdjusted(command.sku, command.quantity, command.location);
+        if(command instanceof AdjustInventory){
+            yield* this.#adjustInventory.receive(command);
+        }
+        return null;
     }
 }
 
+// Commands
 class AdjustInventory {
     constructor(sku, quantity, location) {
         this.sku = sku;
         this.quantity = quantity;
         this.location = location;
     }
+    *receive(command) {
+        yield new InventoryWasAdjusted(command.sku, command.quantity, command.location);
+    }
 }
+
+// Events
 class InventoryWasAdjusted {
     constructor(sku, quantity, location) {
         this.sku = sku;
