@@ -216,3 +216,19 @@ which can be used to re-create the state of the app at any time. And I know prec
 **Link to work:**
 
 - [Github Pages](https://joeyguerra.github.io/100-days-of-code/collage.html)
+
+## Day 16: Dec 5, 2021
+
+**Today's Progress**
+
+- Implement Event Sourcing system
+- Practice TDD
+- Organize code into a domain called Inventory
+
+**Thoughts:** I'm building an event sourced system at work in C#. So I wanted to do it in Javascript just to explore some ideas and semantics. Words mean something. And we choose words derived from our biases and experiences. But the meanings of those words in code are not usually universal. What I mean is when your future self or other people read the code, they won't interpret it as you intended.
+
+A way to mitigate this issue is to use words and semantics which come from research, books, the industry or community at large. So that the probability is higher other people will have similar biases and experiences, resulting in them interpreting the code as you intended.
+
+**Link to work:**
+
+- [Github Pages](https://github.com/joeyguerra/100-days-of-code/blob/main/examples/EventSourcing.mjs)
