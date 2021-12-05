@@ -1,5 +1,9 @@
 import assert from 'assert';
 import ObservableLog from '../ObservableLog.mjs';
+import Domain from '../inventory/Domain.mjs';
+import { InventoryWasAdjusted } from '../inventory/Events.mjs';
+import { AdjustInventory } from '../inventory/Commands.mjs';
+import { InventoryViewBuilder } from '../inventory/ViewBuilders.mjs';
 
 describe('Event Sourcing inventory', ()=>{
     it('Receiving an AdjustInventory command should result in an InventoryWasAdjusted event', ()=>{
@@ -57,31 +61,6 @@ describe('Event Sourcing inventory', ()=>{
     });
 });
 
-// View builder
-class InventoryViewBuilder {
-    constructor(){}
-    apply(initial, events){
-        return events.reduce((state, current)=>{
-            if(current instanceof InventoryWasAdjusted){
-                return this.#applyEvent(state, current);
-            }
-            return state;
-        }, initial);
-    }
-    #applyEvent(state, event){
-        let quantity = Math.max(state.quantity + event.quantity, 0);
-        return new Inventory(event.sku, quantity, event.location);
-    }
-}
-
-// Model
-class Inventory {
-    constructor(sku, quantity, location){
-        this.sku = sku;
-        this.quantity = quantity;
-        this.location = location;
-    }
-}
 /*
 build views
 f(events) -> state
@@ -90,36 +69,3 @@ f(events) -> state
 receive commands
 f(state, command) -> events
 */
-
-// Domain
-class Domain {
-    #adjustInventory = new AdjustInventory();
-    constructor() {}
-    *receive(command) {
-        if(command instanceof AdjustInventory){
-            yield* this.#adjustInventory.receive(command);
-        }
-        return null;
-    }
-}
-
-// Commands
-class AdjustInventory {
-    constructor(sku, quantity, location) {
-        this.sku = sku;
-        this.quantity = quantity;
-        this.location = location;
-    }
-    *receive(command) {
-        yield new InventoryWasAdjusted(command.sku, command.quantity, command.location);
-    }
-}
-
-// Events
-class InventoryWasAdjusted {
-    constructor(sku, quantity, location) {
-        this.sku = sku;
-        this.quantity = quantity;
-        this.location = location;
-    }
-}
