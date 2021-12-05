@@ -1,18 +1,19 @@
 import assert from 'assert';
+import ObservableLog from '../ObservableLog.mjs';
 
 describe('just starting up', ()=>{
     it('should just do something', ()=>{
         const command = new AdjustInventory('123', 3, 'DC1');
-        const expected = [new InventoryWasAdjusted('123', 3, 'DC1')];
+        const expected = new ObservableLog(new InventoryWasAdjusted('123', 3, 'DC1'));
         const domain = new Domain();
-        const actual = [];
+        const actual = new ObservableLog();
         for(const e of domain.receive(command)){
-            actual.push(e);
+            actual.append(e);
         }
         assert.deepEqual(actual, expected, 'should be a list of 1 events');
     });
     it('should take events and produce state', ()=>{
-        const events = [new InventoryWasAdjusted('123', 3, 'DC1')];
+        const events = new ObservableLog(new InventoryWasAdjusted('123', 3, 'DC1'));
         const expected = {
             sku: '123',
             quantity: 3,
@@ -23,10 +24,10 @@ describe('just starting up', ()=>{
         assert.deepEqual(actual, expected);
     });
     it('should add the adjusted quantity to the inventory', ()=>{
-        const events = [
+        const events = new ObservableLog(
             new InventoryWasAdjusted('123', 3, 'DC1'),
             new InventoryWasAdjusted('123', -1, 'DC1')
-        ];
+        );
         const expected = {
             sku: '123',
             quantity: 2,
@@ -37,10 +38,10 @@ describe('just starting up', ()=>{
         assert.deepEqual(actual, expected);
     });
     it('should never be less than zero', ()=>{
-        const events = [
+        const events = new ObservableLog(
             new InventoryWasAdjusted('123', 3, 'DC1'),
             new InventoryWasAdjusted('123', -4, 'DC1')
-        ];
+        );
         const expected = {
             sku: '123',
             quantity: 0,
@@ -61,12 +62,12 @@ class InventoryViewBuilder {
     apply(initial, events){
         return events.reduce((state, current)=>{
             if(current instanceof InventoryWasAdjusted){
-                return this.applyEvent(state, current);
+                return this.#applyEvent(state, current);
             }
             return state;
         }, initial);
     }
-    applyEvent(state, event){
+    #applyEvent(state, event){
         let quantity = Math.max(state.quantity + event.quantity, 0);
         return new Inventory(event.sku, quantity, event.location);
     }
