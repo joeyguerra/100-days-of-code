@@ -160,84 +160,11 @@
         <footer>
         </footer>
     </body>
-    <script>
-        class KeyValueObservable {
-            constructor(observable = {}){
-                this.dependents = {};
-                observable = observable || {};
-                const changed = this.changed.bind(this);
-                const cached = Object.assign({}, observable);
-                Object.keys(observable).forEach(key => {
-                    Reflect.defineProperty(this, key, {
-                        get(){
-                            return cached[key];
-                        },
-                        set(value){
-                            const old = cached[key];
-                            cached[key] = value;
-                            changed(key, old, value);
-                        }
-                    })
-                })
-            }
-            changed(key, old, value){
-                if(!this.dependents[key]) return;
-                this.dependents[key]?.forEach(o=>o.update(key, old, value));
-            }
-            observe(key, dependent){
-                if(!this.dependents[key]) this.dependents[key] = [];
-                this.dependents[key].push(dependent);
-            }
-            commit(){
-
-            }
-        }
-
-        class ObservableLog extends Array{
-            constructor(...args) {
-                super(...args);
-                this.observable = new KeyValueObservable(null);
-            }
-            append(item){
-                super.push(item);
-                this.observable.changed("append", null, item);
-            }
-            observe(key, observer){
-                this.observable.observe(key, observer);
-            }
-        }
-        class ObservableList extends Array{
-            constructor(...args) {
-                super(...args);
-                this.observable = new KeyValueObservable(null);
-            }
-            push(item){
-                super.push(item);
-                this.observable.changed("push", null, item);
-            }
-            pop(){
-                const item = super.pop();
-                this.observable.changed("pop", null, item);
-                return item;
-            }
-            remove(d){
-                let i = 0;
-                let ubounds = this.length;
-                let deleted = [];
-                for(i; i<ubounds;i++){
-                    if(d(this[i], i)){
-                        deleted = this.splice(i, 1);
-                        this.delegate.changed("remove", deleted[0], i);
-                        break;
-                    }
-                }
-                return deleted[0];
-            }
-            observe(key, observer){
-                this.observable.observe(key, observer);
-            }
-        }
-
+    <script type="module">
+        import KeyValueObservable from './KeyValueObservable.mjs';
+        import ObservableList from './ObservableList.mjs';
+        import ObservableLog from './ObservableLog.mjs';
+        
         class ButtonView {
             constructor(container, model, delegate){
                 this.container = container;

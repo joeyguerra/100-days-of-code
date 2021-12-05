@@ -23,5 +23,8 @@
   "homepage": "https://github.com/joeyguerra/100-days-of-code#readme",
   "devDependencies": {
     "mocha": "^9.1.3"
+  },
+  "dependencies": {
+    "uuid": "^8.3.2"
   }
 }
