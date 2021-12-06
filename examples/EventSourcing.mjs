@@ -11,7 +11,7 @@ describe('Event Sourcing inventory', ()=>{
         const expected = new ObservableLog(new InventoryWasAdjusted('123', 3, 'DC1'));
         const domain = new Domain();
         const actual = new ObservableLog();
-        for(const e of domain.receive(command)){
+        for(const e of domain.handle(command)){
             actual.append(e);
         }
         assert.deepEqual(actual, expected, 'should be a list of 1 events');

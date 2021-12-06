@@ -3,9 +3,9 @@ import { AdjustInventory } from './Commands.mjs';
 class Domain {
     #adjustInventory = new AdjustInventory();
     constructor() {}
-    *receive(command) {
+    *handle(command) {
         if(command instanceof AdjustInventory){
-            yield* this.#adjustInventory.receive(command);
+            yield* this.#adjustInventory.handle(command);
         }
         return null;
     }

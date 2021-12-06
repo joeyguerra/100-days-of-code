@@ -5,7 +5,7 @@ class AdjustInventory {
         this.quantity = quantity;
         this.location = location;
     }
-    *receive(command) {
+    *handle(command) {
         yield new InventoryWasAdjusted(command.sku, command.quantity, command.location);
     }
 }
