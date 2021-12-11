@@ -232,3 +232,29 @@ A way to mitigate this issue is to use words and semantics which come from resea
 **Link to work:**
 
 - [Github Pages](https://github.com/joeyguerra/100-days-of-code/blob/main/examples/EventSourcing.mjs)
+
+## Day 17: Dec 10, 2021
+
+**Today's Progress**
+
+- Process commands
+- Build a view
+
+**Thoughts:** It's hard for me to be consistent with this because I'm coding all day already. But if it's ok to skip days, I can keep going.
+
+**Link to work:**
+
+- [Github Pages](https://github.com/joeyguerra/100-days-of-code/blob/main/examples/EventSourcing.mjs)
+
+## Day 18: Dec 11, 2021
+
+**Today's Progress**
+
+- Flush out view builders
+- Restart and Keep it Simple Stupid
+
+**Thoughts:** I'm getting lost. So I think I'll restart and just stick to the 3 functions.
+
+**Link to work:**
+
+- [Github Pages](https://github.com/joeyguerra/100-days-of-code/blob/main/examples/EventSourcingKISS.mjs)

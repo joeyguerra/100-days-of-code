@@ -1,4 +1,4 @@
-class Inventory {
+class InventoryView {
     constructor(sku, quantity, location){
         this.sku = sku;
         this.quantity = quantity;
@@ -7,5 +7,5 @@ class Inventory {
 }
 
 export {
-    Inventory
+    InventoryView
 }

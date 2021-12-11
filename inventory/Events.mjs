@@ -1,4 +1,4 @@
-class InventoryWasAdjusted {
+class InventoryWasAdjustedEvent {
     constructor(sku, quantity, location) {
         this.sku = sku;
         this.quantity = quantity;
@@ -6,5 +6,5 @@ class InventoryWasAdjusted {
     }
 }
 export {
-    InventoryWasAdjusted
+    InventoryWasAdjustedEvent
 };

@@ -9,7 +9,8 @@
   "scripts": {
     "test": "mocha --parallel examples/**/*.mjs",
     "test:watch": "mocha --watch --parallel",
-    "start": "node server.mjs"
+    "start": "node server.mjs",
+    "watch": "nodemon"
   },
   "repository": {
     "type": "git",
@@ -22,9 +23,11 @@
   },
   "homepage": "https://github.com/joeyguerra/100-days-of-code#readme",
   "devDependencies": {
-    "mocha": "^9.1.3"
+    "mocha": "^9.1.3",
+    "nodemon": "^2.0.15"
   },
   "dependencies": {
+    "redis": "^4.0.0",
     "uuid": "^8.3.2"
   }
 }
