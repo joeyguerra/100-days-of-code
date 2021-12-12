@@ -45,10 +45,11 @@ class InMemoryCommandQueue {
     }
 }
 class InventoryView {
-    constructor(sku, quantity, location){
+    constructor(sku, quantity, location, date){
         this.Sku = sku;
         this.Quantity = quantity;
         this.Location = location;
+        this.AsOf = date;
     }
     static GetInventoryByDay(state, getEvents){
         return getEvents().reduce((acc, event) => {
@@ -56,15 +57,17 @@ class InventoryView {
                 if(event.Sku === state.Sku && event.Location === state.Location && event.Occurred.getDate() == state.Occurred.getDate()){
                     acc.Location = event.Location;
                     acc.Quantity -= event.Quantity;
+                    acc.AsOf = event.Occurred;
                 }
             } else if(event instanceof InventoryWasAdjustedEvent){
                 if(event.Sku === state.Sku && event.Location === state.Location && event.Occurred.getDate() == state.Occurred.getDate()){
                     acc.Location = event.Location;
                     acc.Quantity += event.Quantity;
+                    acc.AsOf = event.Occurred;
                 }
             }
             return acc;
-        }, new InventoryView(state.Sku, 0, state.Location));
+        }, new InventoryView(state.Sku, 0, state.Location, state.Occurred));
     }
 }
 class DamangedInventoryView {
@@ -198,7 +201,8 @@ describe('Experimenting: reduce indirection', ()=>{
             new InventoryWasAdjustedEvent('123-DAMANGED', 3, 'DC-DAMANAGED', today)
         );
         const actual = InventoryView.GetInventoryByDay({ Sku: '123-DAMANGED', Location: 'DC-DAMANAGED', Occurred: today }, ()=>events);
-        const expected = new InventoryView('123-DAMANGED', 1, 'DC-DAMANAGED');
+        const expected = new InventoryView('123-DAMANGED', 1, 'DC-DAMANAGED', today);
+        console.log(actual);
         assert.deepEqual(actual, expected);
     });
 });
