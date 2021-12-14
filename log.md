@@ -258,3 +258,16 @@ A way to mitigate this issue is to use words and semantics which come from resea
 **Link to work:**
 
 - [Github Pages](https://github.com/joeyguerra/100-days-of-code/blob/main/examples/EventSourcingKISS.mjs)
+
+## Day 19: Dec 13, 2021
+
+**Today's Progress**
+
+- Define a transport format
+- Define a schema convention
+
+**Thoughts:** Debating JSON vs Key Value pair as a transport format. Key Value pair seems really liberal. Team decided to use JSON, but I wanted to continue exploring key value pair. So I'm writing a parser.
+
+**Link to work:**
+
+- [Github Pages](https://github.com/joeyguerra/100-days-of-code/blob/main/examples/KeyValuePair.mjs)
