@@ -271,3 +271,15 @@ A way to mitigate this issue is to use words and semantics which come from resea
 **Link to work:**
 
 - [Github Pages](https://github.com/joeyguerra/100-days-of-code/blob/main/examples/KeyValuePair.mjs)
+
+## ## Day 20: Dec 18, 2021
+
+**Today's Progress**
+
+- Pipe function calls together
+
+**Thoughts:** I'm researching Monads. 
+
+**Link to work:**
+
+- [Github Pages](https://github.com/joeyguerra/100-days-of-code/blob/main/examples/Pipe.mjs)
