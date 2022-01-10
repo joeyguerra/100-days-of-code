@@ -272,7 +272,7 @@ A way to mitigate this issue is to use words and semantics which come from resea
 
 - [Github Pages](https://github.com/joeyguerra/100-days-of-code/blob/main/examples/KeyValuePair.mjs)
 
-## ## Day 20: Dec 18, 2021
+## Day 20: Dec 18, 2021
 
 **Today's Progress**
 
@@ -283,3 +283,15 @@ A way to mitigate this issue is to use words and semantics which come from resea
 **Link to work:**
 
 - [Github Pages](https://github.com/joeyguerra/100-days-of-code/blob/main/examples/Pipe.mjs)
+
+## Day 21: Jan 9, 2022
+
+**Today's Progress**
+
+- Explored using F#'s match syntax
+
+**Thoughts:** It's hard to code for 100 days straight. But I'm still trying to keep up with the spirit.
+
+**Link to work:**
+
+- [Github Pages](https://github.com/joeyguerra/100-days-of-code/blob/main/examples/EventSourcingKISS.mjs)
