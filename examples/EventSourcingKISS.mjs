@@ -1,5 +1,6 @@
 import assert from 'assert';
 import ObservableLog from '../ObservableLog.mjs';
+import Match from '../Match.mjs';
 
 class AdjustInventoryCommand {
     constructor(sku, quantity, location, occurred) {
@@ -53,21 +54,25 @@ class InventoryView {
     }
     static GetInventoryByDay(state, getEvents){
         return getEvents().reduce((acc, event) => {
-            if(event instanceof InventoryWasDamagedEvent){
-                if(event.Sku === state.Sku && event.Location === state.Location && event.Occurred.getDate() == state.Occurred.getDate()){
-                    acc.Location = event.Location;
-                    acc.Quantity -= event.Quantity;
-                    acc.AsOf = event.Occurred;
-                }
-            } else if(event instanceof InventoryWasAdjustedEvent){
-                if(event.Sku === state.Sku && event.Location === state.Location && event.Occurred.getDate() == state.Occurred.getDate()){
-                    acc.Location = event.Location;
-                    acc.Quantity += event.Quantity;
-                    acc.AsOf = event.Occurred;
-                }
-            }
-            return acc;
-        }, new InventoryView(state.Sku, 0, state.Location, state.Occurred));
+            return Match({
+                InventoryWasAdjustedEvent: (view, e)=> InventoryView.#adjustInventory(view, e),
+                InventoryWasDamagedEvent: (view, e)=> InventoryView.#damageInventory(view, e)
+            }, event.constructor.name)(acc, event);
+        }, state);
+    }
+    static #damageInventory(state, event){
+        if(event.Sku === state.Sku && event.Location === state.Location && event.Occurred.getDate() == state.AsOf.getDate()){
+            state.Location = event.Location;
+            state.Quantity -= event.Quantity;
+        }
+        return state;
+    }
+    static #adjustInventory(state, event){
+        if(event.Sku === state.Sku && event.Location === state.Location && event.Occurred.getDate() == state.AsOf.getDate()){
+            state.Location = event.Location;
+            state.Quantity += event.Quantity;
+        }
+        return state;
     }
 }
 class DamangedInventoryView {
@@ -75,20 +80,21 @@ class DamangedInventoryView {
         this.Sku = sku;
         this.Quantity = quantity;
         this.Location = location;
-        this.Occurred = occurred;
+        this.AsOf = occurred;
     }
 }
+
 class ImperativeShell {
     #interval;
     #queue;
-    constructor(theWorld, queue, events) {
-        this.TheWorld = theWorld;
+    constructor(decisionState, queue, events) {
+        this.DecisionState = decisionState;
         this.#queue = queue;
         this.Events = events;
     }
     IterateOverCommandQueue() {
         for(let c of this.#queue.dequeue()) {
-            for(let e of this.#handle(this.TheWorld, c)) {
+            for(let e of this.#handle(this.DecisionState, c)) {
                 this.Events.append(e);
             }
         }
@@ -99,7 +105,7 @@ class ImperativeShell {
     Apply(events) {
         return events.reduce((accumulator, e) => {
             return this.#match(accumulator, e);
-        }, this.TheWorld);
+        }, this.DecisionState);
     }
     async Input(command) {
         await this.#queue.enqueue(command);
@@ -114,34 +120,40 @@ class ImperativeShell {
     }
     #match(state, e){
         if(!state.Views) state.Views = [];
-        if(e instanceof InventoryWasAdjustedEvent){
-            let view = state.Views.find(v => v instanceof InventoryView && v.Sku == e.Sku && v.Location == e.Location);
-            if(!view) {
-                view = new InventoryView(e.Sku, e.Quantity, e.Location);
-                state.Views.push(view);
-            } else {
-                view.Quantity += e.Quantity;
-            }
-        } else if(e instanceof InventoryWasDamagedEvent){
-            let view = state.Views.find(v => v instanceof DamangedInventoryView && v.Sku == e.Sku && v.Location == e.Location);
-            let inventoryView = state.Views.find(v => v instanceof InventoryView && v.Sku == e.Sku && v.Location == e.Location);
-            if(!view) {
-                view = new DamangedInventoryView(e.Sku, e.Quantity, e.Location, e.Occurred);
-                state.Views.push(view);
-            } else {
-                view.Quantity += e.Quantity;
-                view.Occurred = e.Occurred;
-            }
-            if(!inventoryView) {
-                inventoryView = new InventoryView(e.Sku, -1 * e.Quantity, e.Location);
-                state.Views.push(inventoryView);
-            } else {
-                inventoryView.Quantity -= e.Quantity;
-            }
+        return Match({
+            InventoryWasAdjustedEvent: (state, e) => this.#adjustInventory(state, e),
+            InventoryWasDamagedEvent: (state, e) => this.#damageInventory(state, e)
+        }, e.constructor.name)(state, e);
+    }
+    #adjustInventory(state, e){
+        let view = state.Views.find(v => v instanceof InventoryView && v.Sku == e.Sku && v.Location == e.Location);
+        if(!view) {
+            view = new InventoryView(e.Sku, e.Quantity, e.Location);
+            state.Views.push(view);
+        } else {
+            view.Quantity += e.Quantity;
         }
         return state;
     }
-};
+    #damageInventory(state, e){
+        let view = state.Views.find(v => v instanceof DamangedInventoryView && v.Sku == e.Sku && v.Location == e.Location);
+        let inventoryView = state.Views.find(v => v instanceof InventoryView && v.Sku == e.Sku && v.Location == e.Location);
+        if(!view) {
+            view = new DamangedInventoryView(e.Sku, e.Quantity, e.Location, e.Occurred);
+            state.Views.push(view);
+        } else {
+            view.Quantity += e.Quantity;
+            view.Occurred = e.Occurred;
+        }
+        if(!inventoryView) {
+            inventoryView = new InventoryView(e.Sku, -1 * e.Quantity, e.Location);
+            state.Views.push(inventoryView);
+        } else {
+            inventoryView.Quantity -= e.Quantity;
+        }
+        return state;
+    }
+}
 
 describe('Experimenting: reduce indirection', ()=>{
     it('Given a AdjustInventoryCommand, get an InventoryView', async ()=>{
@@ -200,9 +212,8 @@ describe('Experimenting: reduce indirection', ()=>{
             new InventoryWasDamagedEvent('123-DAMANGED', 2, 'DC-DAMANAGED', today),
             new InventoryWasAdjustedEvent('123-DAMANGED', 3, 'DC-DAMANAGED', today)
         );
-        const actual = InventoryView.GetInventoryByDay({ Sku: '123-DAMANGED', Location: 'DC-DAMANAGED', Occurred: today }, ()=>events);
+        const actual = InventoryView.GetInventoryByDay(new InventoryView('123-DAMANGED', 0, 'DC-DAMANAGED', today), ()=>events);
         const expected = new InventoryView('123-DAMANGED', 1, 'DC-DAMANAGED', today);
-        console.log(actual);
         assert.deepEqual(actual, expected);
     });
 });
