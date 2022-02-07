@@ -1,6 +1,8 @@
 import assert from 'assert';
 import ObservableLog from '../ObservableLog.mjs';
 import Match from '../Match.mjs';
+import { createClient, commandOptions } from 'redis';
+import { Console } from 'console';
 
 class AdjustInventoryCommand {
     constructor(sku, quantity, location, occurred) {
@@ -171,6 +173,59 @@ describe('Experimenting: reduce indirection', ()=>{
         const actual = shell.Apply(events);
         assert.deepEqual(actual, expected);
     });
+    it('Should take a 2d array event and project a view', async ()=>{
+        const map = keyValuePairs=>{
+            let obj = {};
+            const list = [];
+            obj = keyValuePairs.reduce((acc, kv)=>{
+                const [id, attr] = kv[0].split(':');
+                const value = kv[1];
+                if(!acc[id]) {
+                    acc[id] = {};
+                    list.push(acc[id]);
+                }
+                acc[id][attr] = value;
+                return acc;
+            }, obj);
+            return list;
+        };
+
+        const state = {
+            sku: '123-ADJUST',
+            quantity: 1000,
+            location: 'DC-KISS',
+        };
+        const input = [
+            ['123-ADJUST:sku','123-ADJUST'],
+            ['123-ADJUST:quantity', 3],
+            ['123-ADJUST:location', 'DC-KISS'],
+            ['123-ADJUST:occurred', '2018-01-01'],
+            ['123-ADJUST:kind','adjustment'],
+            ['124-ADJUST:sku','124-ADJUST'],
+            ['124-ADJUST:quantity', 3],
+            ['124-ADJUST:location', 'DC-KISS'],
+            ['124-ADJUST:occurred', '2018-01-01'],
+            ['124-ADJUST:kind','adjustment'],
+        ];
+
+        const actual = map(input).reduce((acc, e) => {
+            return Match({
+                adjustment: (acc, e) => {
+                    if(e.sku == acc.sku && e.location == acc.location){
+                        acc.quantity += e.quantity;
+                    }
+                    return acc;
+                }
+            }, e.kind)(acc, e);
+        }, state);
+
+        const expected = {
+            sku: '123-ADJUST',
+            quantity: 1003,
+            location: 'DC-KISS'
+        };
+        assert.deepEqual(actual, expected);
+    });
     it('Report damaged inventory results in a damnaged inventory event and an inventory adjustment event with negative the damaged quantity', async ()=>{
         const queue = new InMemoryCommandQueue();
         const theWorld = {
@@ -215,6 +270,64 @@ describe('Experimenting: reduce indirection', ()=>{
         const actual = InventoryView.GetInventoryByDay(new InventoryView('123-DAMANGED', 0, 'DC-DAMANAGED', today), ()=>events);
         const expected = new InventoryView('123-DAMANGED', 1, 'DC-DAMANAGED', today);
         assert.deepEqual(actual, expected);
+    });
+});
+
+const tryExecAsync = async (fn, c, f = ()=>{})=>{
+    let result = null;
+    try{
+        result = await fn();
+    }catch(e){
+        c(e);
+    }finally {
+        f();
+    }
+    return result;
+};
+
+describe.skip('Redis Exploration', ()=>{
+    it('Should add sku 1234 to stream', async ()=>{
+        const streamKey = 'test:fromnode:events';
+        const consumerGroup = 'test:fromnode:consumer:group';
+        const consumerName = `${consumerGroup}:1`;
+        const commander = createClient({password: process.env.PASSWORD});
+        commander.on('error', err=>console.log('Top level error handler', err));
+        await commander.connect();
+        let id = await commander.xAdd(streamKey, '*', {
+            kind: 'inventory-was-damaged',
+            sku: '1234',
+            quantity: '2',
+            location: 'DC-KISS',
+            occurred_utc: Date.now().toString()
+        });
+        console.log(`Added event with id ${id}`);
+        await tryExecAsync(
+            async () => await commander.xGroupCreate(streamKey, consumerGroup, '0-0', {mkstream: true}),
+            e => console.log('Error creating consumer group', e)
+        );
+
+        const response = await tryExecAsync(
+            async () => {
+                return await commander.xReadGroup(
+                    consumerGroup,
+                    consumerName,
+                    {
+                        key: streamKey,
+                        id: '>'
+                    }
+                );
+            },
+            e => console.log('Error reading messages', e)
+        );
+        const messages = response.find(r => r.name == streamKey).messages;
+        const actual = messages[0].message.sku;
+        const expected = '1234';
+        console.log('Messages', messages);
+        for await(const m of response.find(r => r.name == streamKey).messages){
+            await commander.xAck(streamKey, consumerGroup, m.id);
+        }
+        assert.deepEqual(actual, expected);
+        await commander.quit();
     });
 });
 

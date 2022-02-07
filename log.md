@@ -295,3 +295,15 @@ A way to mitigate this issue is to use words and semantics which come from resea
 **Link to work:**
 
 - [Github Pages](https://github.com/joeyguerra/100-days-of-code/blob/main/examples/EventSourcingKISS.mjs)
+
+## Day 22: Feb 5, 2022
+
+**Today's Progress**
+
+- Nomad tutorial
+
+**Thoughts:** I'm working with kubernetes for work, so how 'bout learning Nomad.
+
+**Link to work:**
+
+- [Github Pages](https://github.com/joeyguerra/100-days-of-code/blob/main/nomad)
