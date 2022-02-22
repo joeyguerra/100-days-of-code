@@ -307,3 +307,15 @@ A way to mitigate this issue is to use words and semantics which come from resea
 **Link to work:**
 
 - [Github Pages](https://github.com/joeyguerra/100-days-of-code/blob/main/nomad)
+
+## Day 23: Feb 19, 2022
+
+**Today's Progress**
+
+- Linked List
+
+**Thoughts:** Create a linked list. I'ts not an array, which was a little surprising. But it makes sense when you think about the fact that the elements are not contiguously stored in memory. So it's more like a messy desk, but you know exactly where everything is.
+
+**Link to work:**
+
+- [Github Pages](https://github.com/joeyguerra/100-days-of-code/blob/main/)
