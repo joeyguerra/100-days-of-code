@@ -1,8 +1,7 @@
 import assert from 'assert';
 import ObservableLog from '../ObservableLog.mjs';
 import Match from '../Match.mjs';
-import { createClient, commandOptions } from 'redis';
-import { Console } from 'console';
+import { createClient } from 'redis';
 
 class AdjustInventoryCommand {
     constructor(sku, quantity, location, occurred) {

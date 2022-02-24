@@ -319,3 +319,27 @@ A way to mitigate this issue is to use words and semantics which come from resea
 **Link to work:**
 
 - [LinkedList](https://github.com/joeyguerra/100-days-of-code/blob/main/examples/LinkedList.mjs)
+
+## Day 24: Feb 21, 2022
+
+**Today's Progress**
+
+- Product database
+
+**Thoughts:** Create an event sourced product catalog. I didn't get anywhere.
+
+**Link to work:**
+
+- [](https://github.com/joeyguerra/100-days-of-code/blob/main/examples/)
+
+## Day 25: Feb 23, 2022
+
+**Today's Progress**
+
+- Get a job running with nomad
+
+**Thoughts:** Can't use volumes with raw_exec. Can't load a file as an artifact with raw_exec for reasons. Had to use the absolute path to server.mjs to successfully start it as a nomad job. Probably fine for dev situations.
+
+**Link to work:**
+
+- [](https://github.com/joeyguerra/100-days-of-code/blob/main/nomad/example.nomad)
