@@ -1,7 +1,10 @@
 import express from 'express';
 
 const app = express();
-
+app.use((req, res, next) => {
+    console.log(`${new Date()} - ${req.method} ${req.url}`);
+    next();
+});
 app.get('/healthz', (req, res) => {
     res.send(`I'm healthy`);
 });

@@ -342,4 +342,16 @@ A way to mitigate this issue is to use words and semantics which come from resea
 
 **Link to work:**
 
-- [](https://github.com/joeyguerra/100-days-of-code/blob/main/nomad/example.nomad)
+- [Nomad](https://github.com/joeyguerra/100-days-of-code/blob/main/nomad/example.nomad)
+
+## Day 26: Mar 5, 2022
+
+**Today's Progress**
+
+- Start an SVG drawing
+
+**Thoughts:** SVG is a drawing standard built with XML.
+
+**Link to work:**
+
+- [SVG](https://github.com/joeyguerra/100-days-of-code/blob/main/svg.html)
